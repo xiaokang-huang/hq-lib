@@ -7,20 +7,35 @@
 #include <hq_window.h>
 
 class HQEngine : PUBLIC MemoryManagedBase {
+	class EngineEventCallBack : PUBLIC EventCallBackBase {
+		virtual void DoCallBack(HQEventType type, HQEventData data);
+	};
+	typedef enum {
+		STATE_ERROR = -1,
+		STATE_READY,
+		STATE_RUNNING,
+		STATE_EXIT,
+	} EngineStatus;
 PUBLIC:
 	HQEngine();
 	~HQEngine();
 
 	RESULT Initialize();
 	RESULT Finalize();
+	RESULT Start();
 PRIVATE:
-	RESULT initialzie_threadpool();
+	RESULT initialize_threadpool();
 	RESULT finalize_threadpool();
+	RESULT initialize_window();
+	RESULT finalize_window();
+
 PRIVATE:
 	HQThreadPoolFast*	m_pThreadPool;
 	UINT32				m_nThreadNum;
 
-	HQWindow		m_window;
+	HQWindow			m_window;
+
+	EngineStatus		m_status;
 };
 
 #endif//_HQENGINE_H_

@@ -5,7 +5,24 @@
 
 typedef UINT32 HQEventType;
 typedef UINT32 HQEventData;
-typedef void(*EventCb)(HQEventType, HQEventData);
+
+struct HQEventStructure {
+	HQEventType _type;
+	HQEventData _data;
+
+	void Set(HQEventType t, HQEventData d) {
+		_type = t;
+		_data = d;
+	}
+};
+
+typedef void(*EventCb)(const HQEventStructure&, void*);
+class EventCallBackBase {
+PUBLIC:
+	virtual ~EventCallBackBase()	{}
+	virtual void DoCallBack(const HQEventStructure& event) = 0;
+	void* usr_ptr;
+};
 
 /*
  * event type data:

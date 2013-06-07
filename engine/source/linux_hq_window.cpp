@@ -12,6 +12,7 @@ PUBLIC:
 
 	void CreateWindow(HQWindow::Info* windowinfo);
 	void DestoryWindow();
+	void GetEvent(HQEventStructure* event);
 
 	void create_event_thread();
 	void destory_event_thread();
@@ -23,7 +24,7 @@ PUBLIC:
 	XVisualInfo*	m_pVi;
 	Atom			m_close_buttom;
 	GLXContext		m_Glcontext;
-	HQThread		m_eventthread;
+	//HQThread		m_eventthread;
 
 	HQWindow::Info*	m_windowinfo;
 };
@@ -84,39 +85,25 @@ void InternalWindow::DestoryWindow() {
 	m_windowinfo = NULL;
 }
 
-static void* event_thread_func(void* param) {
-	InternalWindow* pinternalwindow = (InternalWindow*)param;
+void InternalWindow::GetEvent(HQEventStructure* event) {
 	XEvent			m_event;
-	BOOLEAN			runningflag = TRUE;
-	while (runningflag) {
-		XNextEvent(pinternalwindow->m_pDisplay, &m_event);
-		printf("Get Event: Type is 0x%x\n", m_event.type);
-		switch (m_event.type) {
-		case KeyPress:
-		case KeyRelease:
-			pinternalwindow->deal_with_keyevent(&m_event);
-			break;
-		case Expose:
-			break;
-		case ClientMessage:
-			if (pinternalwindow->m_close_buttom == (Atom)(m_event.xclient.data.l[0])) {
-				if (pinternalwindow->m_windowinfo->event_cb) {
-					pinternalwindow->m_windowinfo->event_cb(HQEVENTTYPE_SYSTEM_EXIT, 0);
-				}
-				runningflag = FALSE;
-			}
-			break;
+	XNextEvent(m_pDisplay, &m_event);
+	printf("Get Event: Type is 0x%x\n", m_event.type);
+	switch (m_event.type) {
+	case ClientMessage:
+		if (m_close_buttom == (Atom)(m_event.xclient.data.l[0])) {
+			event->Set(HQEVENTTYPE_SYSTEM_EXIT, 0);
 		}
+		break;
 	}
-	return NULL;
 }
 
 void InternalWindow::create_event_thread() {
-	m_eventthread.Create(event_thread_func, this);
+	//m_eventthread.Create(event_thread_func, this);
 }
 
 void InternalWindow::destory_event_thread() {
-	m_eventthread.Destroy(NULL);
+	//m_eventthread.Destroy(NULL);
 }
 
 void InternalWindow::deal_with_keyevent(XEvent* pevent) {
@@ -159,4 +146,8 @@ void HQWindow::Destroy() {
 		Managed_Delete(m_pInternal);
 		m_pInternal = NULL;
 	}
+}
+
+void HQWindow::GetEvent(HQEventStructure* event) {
+	m_pInternal->GetEvent(event);
 }

@@ -17,7 +17,7 @@ PUBLIC:
 		UINT32	posy;
 		UINT32	width;
 		UINT32	height;
-		EventCb	event_cb;
+		EventCallBackBase*	event_cb;
 	};
 PUBLIC:
 	HQWindow(const UINT32 nTracerIdx);
@@ -26,7 +26,8 @@ PUBLIC:
 	void Create(Info* pinfo = NULL);
 	void Destroy();
 
-	void SetFullScreen(BOOLEAN on);
+	//void SetFullScreen(BOOLEAN on);
+	void GetEvent(HQEventStructure* event);
 PRIVATE:
 	Info			m_windowinfo;
 	InternalWindow* m_pInternal;

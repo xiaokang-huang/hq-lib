@@ -1,0 +1,34 @@
+print "Building mylib"
+
+CC = 'g++'
+CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP'
+LIBS = ''
+LIBPATH = ''
+LINKFLAGS = ''
+
+CPPPATH = './include'
+SOURCE = '\
+	./source/hq_memory_mgr.cpp\
+	./source/hq_threadpool_fast.cpp\
+	./source/linux_hq_thread.cpp\
+	./source/hq_hash.cpp\
+	./source/hq_mempool.cpp\
+	./source/linux_hq_os.cpp\
+	./source/linux_hq_thread_pool.cpp\
+	./source/container/hq_binarynode.cpp\
+	./source/container/hq_buffer.cpp\
+	./source/container/hq_concurrentqueue.cpp\
+	./source/container/hq_doublelist.cpp\
+	./source/container/hq_node.cpp\
+	./source/container/hq_quadnode.cpp\
+	./source/math/hq_matrix.cpp\
+	./source/math/hq_vertex.cpp\
+'
+
+SharedLibrary('mylib', Split(SOURCE),\
+	CPPPATH = Split(CPPPATH),\
+	LIBS = Split(LIBS),\
+	LIBPATH = Split(LIBPATH),\
+	CCFLAGS = Split(CCFLAGS),\
+	LINKFLAGS = Split(LINKFLAGS),\
+)

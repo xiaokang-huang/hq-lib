@@ -1,0 +1,26 @@
+print "Building test_mylib"
+
+CC = 'g++'
+CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP'
+LIBS = '-lpthread -lmylib -lcppunit'
+LIBPATH = '../mylib/'
+LINKFLAGS = '-Xlinker -R./'
+
+CPPPATH = '../mylib/include'
+SOURCE = '\
+	source/test_container.cpp\
+	source/test_memorymgr.cpp\
+	source/test_threadpool.cpp\
+	source/test_hash.cpp\
+	source/test_threadpool_fast.cpp\
+	source/test_main.cpp\
+	source/test_thread.cpp\
+'
+
+Program('testmylib', Split(SOURCE),\
+	CPPPATH = Split(CPPPATH),\
+	LIBS = Split(LIBS),\
+	LIBPATH = Split(LIBPATH),\
+	CCFLAGS = Split(CCFLAGS),\
+	LINKFLAGS = Split(LINKFLAGS),\
+)

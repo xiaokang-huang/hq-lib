@@ -1,0 +1,20 @@
+print "Building test_engine"
+
+CC = 'g++'
+CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP'
+LIBS = '-lpthread -lmylib -lhqengine -lGL -lX11'
+LIBPATH = '../mylib/ ../engine/'
+LINKFLAGS = '-Xlinker -R./'
+
+CPPPATH = '../mylib/include ../engine/include'
+SOURCE = '\
+	source/main.cpp\
+'
+
+Program('testengine', Split(SOURCE),\
+	CPPPATH = Split(CPPPATH),\
+	LIBS = Split(LIBS),\
+	LIBPATH = Split(LIBPATH),\
+	CCFLAGS = Split(CCFLAGS),\
+	LINKFLAGS = Split(LINKFLAGS),\
+)

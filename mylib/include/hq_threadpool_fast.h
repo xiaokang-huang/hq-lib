@@ -60,6 +60,7 @@ PRIVATE:
 	ContextQueue*		m_pWaitQueue;
 
 	UINT32				m_nThreadNum;
+	HQAtomic			m_nThreadCurr;
 	ThreadNodeFast*		m_pThread;
 
 	HQThreadSemaphore	m_FreeSemaphore;

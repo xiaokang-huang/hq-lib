@@ -39,7 +39,13 @@ void* HQThreadPoolFast::threadpool_func(void* param) {
 
 		ContextNodeFast* pcontextnode = (pthreadnode->_pool->m_pContextNodeArray) + idx;
 		if ( IS_TERMWORK(pcontextnode) ) {
-			running = FALSE;
+			if (pthreadnode->_pool->m_pWaitQueue->GetUsed() < pthreadnode->_pool->m_nThreadCurr.Get()) {
+				pthreadnode->_pool->m_nThreadCurr.Sub(1);
+				running = FALSE;
+			} else {
+				pthreadnode->_pool->m_pWaitQueue->PushBack(idx);
+				pthreadnode->_pool->m_WaitSemaphore.Release(1);
+			}
 		} else {
 			pcontextnode->context.context_func(pthreadnode->_pool, pcontextnode->context.context_param);
 		}
@@ -72,6 +78,7 @@ void HQThreadPoolFast::finalize_locks() {
 void HQThreadPoolFast::initialize_thread(UINT32 threadnum) {
 	finalize_thread();
 	m_nThreadNum = (threadnum == 0)? GetProcessNum() : threadnum;
+	m_nThreadCurr.Set(m_nThreadNum);
 	m_pThread = Managed_NewN(m_nThreadNum, ThreadNodeFast);
 	for (UINT32 i = 0; i < m_nThreadNum; ++i) {
 		m_pThread[i]._index = i;

@@ -125,6 +125,7 @@ void test_threadpool_fast::TC_01_05() {
 	WorkThreadContestGroupFast* group = thread_pool.CreateGroup(context);
 	for (UINT32 i = 0;  i < LOOP_NUM; ++i) {
 		thread_pool.PutContext(context, group);
+		usleep(20000);
 	}
 	thread_pool.SetGroupReady(group);
 
@@ -133,17 +134,23 @@ void test_threadpool_fast::TC_01_05() {
 #undef LOOP_NUM
 }
 
+static void* atomic_add_sleep(HQThreadPoolFast* ppool, void* param) {
+	HQAtomic* patom = (HQAtomic*)param;
+	patom->Add(1);
+	usleep(20000);
+	return NULL;
+}
+
 void test_threadpool_fast::TC_01_06() {
 #define LOOP_NUM 4
 	INIT_THREADPOOL(4, 512);
 
 	UINT32 data = 0;
-	WorkThreadContextFast context(	atomic_add, &data	);
+	WorkThreadContextFast context(	atomic_add_sleep, &data	);
 	WorkThreadContestGroupFast* group = thread_pool.CreateGroup(context);
 	for (UINT32 i = 0;  i < LOOP_NUM; ++i) {
 		thread_pool.PutContext(context, group);
 	}
-	usleep(500000);
 	thread_pool.SetGroupReady(group);
 
 	DEINIT_THREADPOOL();

@@ -1,14 +1,12 @@
-mkdir out
-
 cd mylib
 scons -c
 scons -Q
-cp ./libmylib.so ../out/
+cp ./libmylib.so ../
 cd ..
 
 cd test_mylib
 scons -c
 scons -Q
-cp ./testmylib ../out/
+cp ./testmylib ../
 cd ..
 

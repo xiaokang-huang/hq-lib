@@ -5,29 +5,7 @@
 #include <GL/glx.h>
 #include <hq_thread.h>
 
-class InternalWindow : PUBLIC MemoryAllocatorBase {
-PUBLIC:
-	InternalWindow();
-	~InternalWindow();
-
-	void CreateWindow(HQWindow::Info* windowinfo);
-	void DestoryWindow();
-	void GetEvent(HQEventStructure* event);
-
-	void create_event_thread();
-	void destory_event_thread();
-	void deal_with_keyevent(XEvent* pevent);
-
-PUBLIC:
-	Display*		m_pDisplay;
-	Window			m_Window;
-	XVisualInfo*	m_pVi;
-	Atom			m_close_buttom;
-	GLXContext		m_Glcontext;
-	//HQThread		m_eventthread;
-
-	HQWindow::Info*	m_windowinfo;
-};
+#include <linux_hq_internalwindow.h>
 
 InternalWindow::InternalWindow() {
 	m_pDisplay = NULL;
@@ -119,7 +97,7 @@ void InternalWindow::deal_with_keyevent(XEvent* pevent) {
 /* ======================================================================
  * HQWindow
  * */
-HQWindow::HQWindow(const UINT32 nTracerIdx) : MemoryManagedBase(nTracerIdx), m_pInternal(NULL) {
+HQWindow::HQWindow(const UINT32 nTracerIdx) : MemoryManagedBase(nTracerIdx), m_pInternal(0) {
 	m_windowinfo.fullscreen = FALSE;
 	m_windowinfo.posx = 10;
 	m_windowinfo.posy = 10;
@@ -136,18 +114,22 @@ void HQWindow::Create(HQWindow::Info* pinfo) {
 	if (pinfo) {
 		m_windowinfo = *pinfo;
 	}
-	m_pInternal = Managed_New(InternalWindow, ());
-	m_pInternal->CreateWindow(&m_windowinfo);
+	m_pInternal = (HQHANDLE)Managed_New(InternalWindow, ());
+	((InternalWindow*)m_pInternal)->CreateWindow(&m_windowinfo);
 }
 
 void HQWindow::Destroy() {
 	if (m_pInternal) {
-		m_pInternal->DestoryWindow();
-		Managed_Delete(m_pInternal);
+		((InternalWindow*)m_pInternal)->DestoryWindow();
+		Managed_Delete((InternalWindow*)m_pInternal);
 		m_pInternal = NULL;
 	}
 }
 
 void HQWindow::GetEvent(HQEventStructure* event) {
-	m_pInternal->GetEvent(event);
+	((InternalWindow*)m_pInternal)->GetEvent(event);
+}
+
+HQHANDLE HQWindow::GetHandle() {
+	return m_pInternal;
 }

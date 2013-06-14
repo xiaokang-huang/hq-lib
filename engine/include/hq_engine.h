@@ -5,6 +5,7 @@
 #include <hq_threadpool_fast.h>
 #include <hq_memory_mgr.h>
 #include <hq_window.h>
+#include <rendersystem/hq_rendersystem.h>
 
 class HQEngine : PUBLIC MemoryManagedBase {
 	class EngineEventCallBack : PUBLIC EventCallBackBase {
@@ -16,6 +17,7 @@ class HQEngine : PUBLIC MemoryManagedBase {
 		STATE_RUNNING,
 		STATE_EXIT,
 	} EngineStatus;
+
 PUBLIC:
 	HQEngine();
 	~HQEngine();
@@ -34,6 +36,7 @@ PRIVATE:
 	UINT32				m_nThreadNum;
 
 	HQWindow			m_window;
+	HQRenderSystem		m_render;
 
 	EngineStatus		m_status;
 };

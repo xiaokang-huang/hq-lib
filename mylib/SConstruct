@@ -1,7 +1,7 @@
 print "Building mylib"
 
 CC = 'g++'
-CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP'
+CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -g'
 LIBS = ''
 LIBPATH = ''
 LINKFLAGS = ''

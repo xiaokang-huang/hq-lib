@@ -5,9 +5,7 @@
 #include <hq_os.h>
 #include <hq_memory_mgr.h>
 #include <hq_event_def.h>
-#include <rendersystem/hq_rendersystem.h>
-
-class InternalWindow;
+//#include <rendersystem/hq_rendersystem.h>
 
 class HQWindow : PUBLIC MemoryManagedBase {
 PUBLIC:
@@ -28,9 +26,10 @@ PUBLIC:
 
 	//void SetFullScreen(BOOLEAN on);
 	void GetEvent(HQEventStructure* event);
+	HQHANDLE GetHandle();
 PRIVATE:
-	Info			m_windowinfo;
-	InternalWindow* m_pInternal;
+	Info		m_windowinfo;
+	HQHANDLE	m_pInternal;
 };
 
 #endif//_HQWINDOW_H_

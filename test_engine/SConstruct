@@ -1,7 +1,7 @@
 print "Building test_engine"
 
 CC = 'g++'
-CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP'
+CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -g'
 LIBS = '-lpthread -lmylib -lhqengine -lGL -lX11'
 LIBPATH = '../mylib/ ../engine/'
 LINKFLAGS = '-Xlinker -R./'

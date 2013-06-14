@@ -39,7 +39,7 @@ void* HQThreadPoolFast::threadpool_func(void* param) {
 
 		ContextNodeFast* pcontextnode = (pthreadnode->_pool->m_pContextNodeArray) + idx;
 		if ( IS_TERMWORK(pcontextnode) ) {
-			if (pthreadnode->_pool->m_pWaitQueue->GetUsed() < pthreadnode->_pool->m_nThreadCurr.Get()) {
+			if (pthreadnode->_pool->m_pWaitQueue->GetUsed() < (UINT32)pthreadnode->_pool->m_nThreadCurr.Get()) {
 				pthreadnode->_pool->m_nThreadCurr.Sub(1);
 				running = FALSE;
 			} else {

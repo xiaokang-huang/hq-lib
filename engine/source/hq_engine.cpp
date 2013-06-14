@@ -4,6 +4,8 @@
 #include <hq_util.h>
 #include <hq_event_def.h>
 
+#include <unistd.h>
+
 enum {
 	INDEX_COMMON_MEMORY = 0,
 	INDEX_RESOURCE_MEMORY,
@@ -22,6 +24,16 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 	}
 }
 
+void* thread_func(HQThreadPoolFast* pool, void* param) {
+	HQRenderSystem* prender = (HQRenderSystem*)param;
+	prender->ClearBackBuffer(1, 0, 0, 1);
+	prender->SwapScreenBuffer();
+	usleep(33000);
+	WorkThreadContextFast context(thread_func, param);
+	pool->PutContext(context, NULL);
+	return NULL;
+}
+
 /*
  * ------------------------------------------------------------
  * private function
@@ -32,11 +44,13 @@ RESULT HQEngine::initialize_threadpool() {
 	m_nThreadNum = GetProcessNum();
 	HQThreadPoolFast::Info info = {	INDEX_COMMON_MEMORY	};
 	m_pThreadPool = new(INDEX_COMMON_MEMORY) HQThreadPoolFast(&info);
+	m_pThreadPool->Initialize(m_nThreadNum, DefaultContextNum);
 	return HQRESULT_SUCCESS;
 }
 
 RESULT HQEngine::finalize_threadpool() {
 	if (m_pThreadPool) {
+		m_pThreadPool->Finalize();
 		Managed_Delete_S(m_pThreadPool);
 		m_nThreadNum = 0;
 	}
@@ -82,6 +96,7 @@ HQEngine::~HQEngine() {
 RESULT HQEngine::Initialize() {
 	initialize_threadpool();
 	initialize_window();
+	m_render.Initialize(&m_window);
 
 	m_status = STATE_READY;
 
@@ -99,9 +114,12 @@ RESULT HQEngine::Finalize() {
 
 RESULT HQEngine::Start() {
 	HQEventStructure event;
+	WorkThreadContextFast context(thread_func, &m_render);
+	m_pThreadPool->PutContext(context, NULL);
 	while (TRUE) {
 		m_window.GetEvent(&event);
 		if (event._type == HQEVENTTYPE_SYSTEM_EXIT) {
+			m_pThreadPool->Finalize();
 			m_status = STATE_EXIT;
 			break;
 		}

@@ -1,12 +1,12 @@
 print "Building engine"
 
 CC = 'g++'
-CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP'
+CCFLAGS = '-O3 -Wall -c -fmessage-length=0 -fPIC -MMD -MP -g'
 LIBS = '-lmylib'
 LIBPATH = '../mylib/'
 LINKFLAGS = ''
 
-CPPPATH = './include ../mylib/include'
+CPPPATH = './include ./internal_include ../mylib/include'
 SOURCE = '\
 	./source/hq_engine.cpp\
 	./source/linux_hq_window.cpp\

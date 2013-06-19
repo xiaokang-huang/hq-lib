@@ -24,7 +24,7 @@ PUBLIC:
 	void Create(Info* pinfo = NULL);
 	void Destroy();
 
-	//void SetFullScreen(BOOLEAN on);
+	void AttachCurrentThread();
 	void GetEvent(HQEventStructure* event);
 	HQHANDLE GetHandle();
 PRIVATE:

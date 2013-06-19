@@ -24,9 +24,14 @@ void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	m_windowinfo = windowinfo;
 	GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
 
+	XInitThreads();
+
 	m_pDisplay = XOpenDisplay( NULL );
 	Window root = DefaultRootWindow(m_pDisplay);
 	m_pVi = glXChooseVisual(m_pDisplay, 0, att);
+	if (m_pVi == NULL) {
+		printf("VI is NULL\n");
+	}
 	Colormap cmap = XCreateColormap(m_pDisplay, root, m_pVi->visual, AllocNone);
 	XSetWindowAttributes swa;
 	swa.colormap = cmap;
@@ -41,13 +46,11 @@ void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	XSetWMProtocols(m_pDisplay, m_Window, &m_close_buttom, 1);
 
 	m_Glcontext = glXCreateContext(m_pDisplay, m_pVi, NULL, GL_TRUE);
-	glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext);
+	ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
 
-	create_event_thread();
 }
 
 void InternalWindow::DestoryWindow() {
-	destory_event_thread();
 
 	glXMakeCurrent(m_pDisplay, None, NULL);
 	glXDestroyContext(m_pDisplay, m_Glcontext);
@@ -65,9 +68,17 @@ void InternalWindow::DestoryWindow() {
 
 void InternalWindow::GetEvent(HQEventStructure* event) {
 	XEvent			m_event;
+	int num = XEventsQueued(m_pDisplay, QueuedAlready);
+	if (num == 0)	return;
 	XNextEvent(m_pDisplay, &m_event);
 	printf("Get Event: Type is 0x%x\n", m_event.type);
 	switch (m_event.type) {
+	case Expose:
+		XWindowAttributes       gwa;
+		XGetWindowAttributes(m_pDisplay, m_Window, &gwa);
+		m_windowinfo->width = gwa.width;
+		m_windowinfo->height = gwa.height;
+		break;
 	case ClientMessage:
 		if (m_close_buttom == (Atom)(m_event.xclient.data.l[0])) {
 			event->Set(HQEVENTTYPE_SYSTEM_EXIT, 0);
@@ -76,22 +87,17 @@ void InternalWindow::GetEvent(HQEventStructure* event) {
 	}
 }
 
-void InternalWindow::create_event_thread() {
-	//m_eventthread.Create(event_thread_func, this);
+void InternalWindow::AttachCurrentThread() {
+	ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
+	glEnable(GL_DEPTH_TEST);
+	glViewport(0, 0, m_windowinfo->width, m_windowinfo->height);
 }
 
-void InternalWindow::destory_event_thread() {
-	//m_eventthread.Destroy(NULL);
+void InternalWindow::LockScreen() {
+	//XLockDisplay(m_pDisplay);
 }
-
-void InternalWindow::deal_with_keyevent(XEvent* pevent) {
-	int count;
-	int buffer_size = 80;
-	char buffer[80];
-	KeySym keysym;
-
-	count = XLookupString(&(pevent->xkey), buffer, buffer_size, &keysym, NULL);
-	printf("\tCount=%d, ASCII=%x, shift=%s\n", count, buffer[0], (pevent->xkey.state&ShiftMask)? "on":"off");
+void InternalWindow::UnlockScreen() {
+	//XUnlockDisplay(m_pDisplay);
 }
 
 /* ======================================================================
@@ -122,7 +128,7 @@ void HQWindow::Destroy() {
 	if (m_pInternal) {
 		((InternalWindow*)m_pInternal)->DestoryWindow();
 		Managed_Delete((InternalWindow*)m_pInternal);
-		m_pInternal = NULL;
+		m_pInternal = 0;
 	}
 }
 
@@ -132,4 +138,8 @@ void HQWindow::GetEvent(HQEventStructure* event) {
 
 HQHANDLE HQWindow::GetHandle() {
 	return m_pInternal;
+}
+
+void HQWindow::AttachCurrentThread() {
+	((InternalWindow*)m_pInternal)->AttachCurrentThread();
 }

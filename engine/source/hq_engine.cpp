@@ -24,13 +24,18 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 	}
 }
 
-void* thread_func(HQThreadPoolFast* pool, void* param) {
-	HQRenderSystem* prender = (HQRenderSystem*)param;
-	prender->ClearBackBuffer(1, 0, 0, 1);
-	prender->SwapScreenBuffer();
+void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
+	printf("%s Enter\n", __FUNCTION__);
 	usleep(33000);
+	HQEngine* pengine = (HQEngine*)param;
+	pengine->m_window.AttachCurrentThread();
+	printf("%s AttachCurrentThread\n", __FUNCTION__);
+	pengine->m_render.ClearBackBuffer(1, 1, 0, 1);
+	pengine->m_render.SwapScreenBuffer();
+
 	WorkThreadContextFast context(thread_func, param);
 	pool->PutContext(context, NULL);
+	printf("%s Exit\n", __FUNCTION__);
 	return NULL;
 }
 
@@ -114,7 +119,7 @@ RESULT HQEngine::Finalize() {
 
 RESULT HQEngine::Start() {
 	HQEventStructure event;
-	WorkThreadContextFast context(thread_func, &m_render);
+	WorkThreadContextFast context(HQEngine::thread_func, this);
 	m_pThreadPool->PutContext(context, NULL);
 	while (TRUE) {
 		m_window.GetEvent(&event);

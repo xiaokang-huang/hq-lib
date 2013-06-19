@@ -31,6 +31,7 @@ PRIVATE:
 	RESULT initialize_window();
 	RESULT finalize_window();
 
+	static void* thread_func(HQThreadPoolFast* pool, void* param);
 PRIVATE:
 	HQThreadPoolFast*	m_pThreadPool;
 	UINT32				m_nThreadNum;

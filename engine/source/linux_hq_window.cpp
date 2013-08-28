@@ -24,7 +24,7 @@ void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	m_windowinfo = windowinfo;
 	GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
 
-	XInitThreads();
+	//XInitThreads();
 
 	m_pDisplay = XOpenDisplay( NULL );
 	Window root = DefaultRootWindow(m_pDisplay);
@@ -66,31 +66,38 @@ void InternalWindow::DestoryWindow() {
 	m_windowinfo = NULL;
 }
 
-void InternalWindow::GetEvent(HQEventStructure* event) {
+UINT32 InternalWindow::GetEvent(HQEventStructure* event_array, UINT32 array_size) {
 	XEvent			m_event;
-	int num = XEventsQueued(m_pDisplay, QueuedAlready);
-	if (num == 0)	return;
-	XNextEvent(m_pDisplay, &m_event);
-	printf("Get Event: Type is 0x%x\n", m_event.type);
-	switch (m_event.type) {
-	case Expose:
-		XWindowAttributes       gwa;
-		XGetWindowAttributes(m_pDisplay, m_Window, &gwa);
-		m_windowinfo->width = gwa.width;
-		m_windowinfo->height = gwa.height;
-		break;
-	case ClientMessage:
-		if (m_close_buttom == (Atom)(m_event.xclient.data.l[0])) {
-			event->Set(HQEVENTTYPE_SYSTEM_EXIT, 0);
+	UINT32 num = (UINT32)XEventsQueued(m_pDisplay, QueuedAlready);
+	if (num >= array_size)	num = array_size;
+	UINT32 i;
+	for (i = 0; i < num; ++i) {
+		XNextEvent(m_pDisplay, &m_event);
+		switch (m_event.type) {
+		case Expose:
+			XWindowAttributes       gwa;
+			XGetWindowAttributes(m_pDisplay, m_Window, &gwa);
+			m_windowinfo->width = gwa.width;
+			m_windowinfo->height = gwa.height;
+			break;
+		case ClientMessage:
+			if (m_close_buttom == (Atom)(m_event.xclient.data.l[0])) {
+				event_array[i ++].Set(HQEVENTTYPE_SYSTEM_EXIT, 0);
+			}
+			break;
 		}
-		break;
 	}
+	return i;
 }
 
 void InternalWindow::AttachCurrentThread() {
 	ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
-	glEnable(GL_DEPTH_TEST);
-	glViewport(0, 0, m_windowinfo->width, m_windowinfo->height);
+	//glEnable(GL_DEPTH_TEST);
+	//glViewport(0, 0, m_windowinfo->width, m_windowinfo->height);
+}
+
+void InternalWindow::DetachThread() {
+	glXMakeCurrent(m_pDisplay, None, NULL);
 }
 
 void InternalWindow::LockScreen() {
@@ -132,8 +139,8 @@ void HQWindow::Destroy() {
 	}
 }
 
-void HQWindow::GetEvent(HQEventStructure* event) {
-	((InternalWindow*)m_pInternal)->GetEvent(event);
+UINT32 HQWindow::GetEvent(HQEventStructure* event_array, UINT32 array_size) {
+	return ((InternalWindow*)m_pInternal)->GetEvent(event_array, array_size);
 }
 
 HQHANDLE HQWindow::GetHandle() {
@@ -142,4 +149,8 @@ HQHANDLE HQWindow::GetHandle() {
 
 void HQWindow::AttachCurrentThread() {
 	((InternalWindow*)m_pInternal)->AttachCurrentThread();
+}
+
+void HQWindow::DetachThread() {
+	((InternalWindow*)m_pInternal)->DetachThread();
 }

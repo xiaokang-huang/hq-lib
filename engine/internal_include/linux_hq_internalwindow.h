@@ -13,11 +13,12 @@ PUBLIC:
 
 	void CreateWindow(HQWindow::Info* windowinfo);
 	void DestoryWindow();
-	void GetEvent(HQEventStructure* event);
+	UINT32 GetEvent(HQEventStructure* event_array, UINT32 array_size);
 
 	void LockScreen();
 	void UnlockScreen();
 	void AttachCurrentThread();
+	void DetachThread();
 
 PUBLIC:
 	Display*		m_pDisplay;

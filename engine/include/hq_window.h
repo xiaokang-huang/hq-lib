@@ -25,7 +25,8 @@ PUBLIC:
 	void Destroy();
 
 	void AttachCurrentThread();
-	void GetEvent(HQEventStructure* event);
+	void DetachThread();
+	UINT32 GetEvent(HQEventStructure* event_array, UINT32 array_size);
 	HQHANDLE GetHandle();
 PRIVATE:
 	Info		m_windowinfo;

@@ -26,13 +26,32 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 
 void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
 	printf("%s Enter\n", __FUNCTION__);
-	usleep(33000);
 	HQEngine* pengine = (HQEngine*)param;
 	pengine->m_window.AttachCurrentThread();
 	printf("%s AttachCurrentThread\n", __FUNCTION__);
-	pengine->m_render.ClearBackBuffer(1, 1, 0, 1);
+
+	HQEventStructure event;
+	UINT32 event_get;
+	do {
+		event_get = pengine->m_window.GetEvent(&event, 1);
+		if (event._type == HQEVENTTYPE_SYSTEM_EXIT) {
+			pengine->m_status = STATE_EXIT;
+			return NULL;
+		}
+	} while (event_get != 0);
+
+	static int i = 0;
+	i = (i + 1) & 3;
+	REAL color[4][4] = {
+		{1, 0, 0, 1},
+		{0, 1, 0, 1},
+		{0, 0, 1, 1},
+		{1, 1, 1, 1}
+	};
+	pengine->m_render.ClearBackBuffer(color[i][0], color[i][1], color[i][2], color[i][3]);
 	pengine->m_render.SwapScreenBuffer();
 
+	usleep(33000);
 	WorkThreadContextFast context(thread_func, param);
 	pool->PutContext(context, NULL);
 	printf("%s Exit\n", __FUNCTION__);
@@ -118,16 +137,10 @@ RESULT HQEngine::Finalize() {
 }
 
 RESULT HQEngine::Start() {
-	HQEventStructure event;
 	WorkThreadContextFast context(HQEngine::thread_func, this);
 	m_pThreadPool->PutContext(context, NULL);
-	while (TRUE) {
-		m_window.GetEvent(&event);
-		if (event._type == HQEVENTTYPE_SYSTEM_EXIT) {
-			m_pThreadPool->Finalize();
-			m_status = STATE_EXIT;
-			break;
-		}
+	while (m_status != STATE_EXIT) {
+		sleep(1);
 	}
 	return HQRESULT_SUCCESS;
 }

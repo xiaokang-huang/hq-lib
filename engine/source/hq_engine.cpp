@@ -51,6 +51,7 @@ void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
 	pengine->m_render.ClearBackBuffer(color[i][0], color[i][1], color[i][2], color[i][3]);
 	pengine->m_render.SwapScreenBuffer();
 
+	pengine->m_window.DetachThread();
 	usleep(33000);
 	WorkThreadContextFast context(thread_func, param);
 	pool->PutContext(context, NULL);

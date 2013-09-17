@@ -46,7 +46,7 @@ void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	XSetWMProtocols(m_pDisplay, m_Window, &m_close_buttom, 1);
 
 	m_Glcontext = glXCreateContext(m_pDisplay, m_pVi, NULL, GL_TRUE);
-	ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
+	//ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
 
 }
 

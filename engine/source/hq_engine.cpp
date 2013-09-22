@@ -119,20 +119,17 @@ HQEngine::~HQEngine() {
 }
 
 RESULT HQEngine::Initialize() {
-	initialize_threadpool();
 	initialize_window();
 	m_render.Initialize(&m_window);
-
+	initialize_threadpool();
 	m_status = STATE_READY;
 
 	return HQRESULT_SUCCESS;
 }
 
 RESULT HQEngine::Finalize() {
-	m_status = STATE_EXIT;
-
-	finalize_window();
 	finalize_threadpool();
+	finalize_window();
 
 	return HQRESULT_SUCCESS;
 }
@@ -140,8 +137,6 @@ RESULT HQEngine::Finalize() {
 RESULT HQEngine::Start() {
 	WorkThreadContextFast context(HQEngine::thread_func, this);
 	m_pThreadPool->PutContext(context, NULL);
-	while (m_status != STATE_EXIT) {
-		sleep(1);
-	}
+	m_status = STATE_RUNNING;
 	return HQRESULT_SUCCESS;
 }

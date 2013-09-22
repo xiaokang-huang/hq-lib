@@ -22,8 +22,12 @@ InternalWindow::~InternalWindow() {
 
 void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	m_windowinfo = windowinfo;
-	GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-
+	GLint att[] = {
+		GLX_RGBA,
+	    GLX_DEPTH_SIZE, 24,
+	    GLX_DOUBLEBUFFER,
+	    None
+	};
 	//XInitThreads();
 
 	m_pDisplay = XOpenDisplay( NULL );
@@ -46,8 +50,7 @@ void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	XSetWMProtocols(m_pDisplay, m_Window, &m_close_buttom, 1);
 
 	m_Glcontext = glXCreateContext(m_pDisplay, m_pVi, NULL, GL_TRUE);
-	//ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
-
+	ASSERT(glXMakeCurrent(m_pDisplay, None, NULL));
 }
 
 void InternalWindow::DestoryWindow() {

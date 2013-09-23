@@ -1,11 +1,12 @@
 #include <hq_window.h>
+#include <hq_thread.h>
+#include <hq_util.h>
+#include <linux_hq_internalwindow.h>
+
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
-#include <hq_thread.h>
-
-#include <linux_hq_internalwindow.h>
 
 InternalWindow::InternalWindow() {
 	m_pDisplay = NULL;
@@ -34,7 +35,7 @@ void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	Window root = DefaultRootWindow(m_pDisplay);
 	m_pVi = glXChooseVisual(m_pDisplay, 0, att);
 	if (m_pVi == NULL) {
-		printf("VI is NULL\n");
+		DEBUG_PRINT("VI is NULL\n");
 	}
 	Colormap cmap = XCreateColormap(m_pDisplay, root, m_pVi->visual, AllocNone);
 	XSetWindowAttributes swa;

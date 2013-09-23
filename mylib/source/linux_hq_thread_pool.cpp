@@ -5,18 +5,18 @@
 /*
  * function macro
  */
-#define PRINT_NODE(pnode) printf("\nNode[%p]Func[%p]Prev[%p]Next[%p]", pnode, pnode->_context_data.context_func, pnode->_prev, pnode->_next)
+#define PRINT_NODE(pnode) DEBUG_PRINT("\nNode[%p]Func[%p]Prev[%p]Next[%p]", pnode, pnode->_context_data.context_func, pnode->_prev, pnode->_next)
 
 #define PRINT_LIST(list)  do {\
 	ContextNode* pnode = list[LISTHEAD];\
 	int nodecount = 0;\
-	printf("\n%s [%p]->[%p]", #list, list[LISTHEAD], list[LISTTAIL]);\
+	DEBUG_PRINT("\n%s [%p]->[%p]", #list, list[LISTHEAD], list[LISTTAIL]);\
 	while (pnode) {\
-		printf("\nNode[%p]Func[%p]Prev[%p]Next[%p]", pnode, pnode->_context_data.context_func, pnode->_prev, pnode->_next);\
+		DEBUG_PRINT("\nNode[%p]Func[%p]Prev[%p]Next[%p]", pnode, pnode->_context_data.context_func, pnode->_prev, pnode->_next);\
 		pnode = pnode->_next;\
 		++ nodecount;\
 	};\
-	printf("\nNode count: %d", nodecount);\
+	DEBUG_PRINT("\nNode count: %d", nodecount);\
 } while (0)
 #define PRINT_FREELIST PRINT_LIST(m_pFreeList)
 #define PRINT_WAITLIST PRINT_LIST(m_pWaitList)

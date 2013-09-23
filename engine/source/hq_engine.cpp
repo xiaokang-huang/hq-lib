@@ -25,10 +25,8 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 }
 
 void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
-	printf("%s Enter\n", __FUNCTION__);
 	HQEngine* pengine = (HQEngine*)param;
 	pengine->m_window.AttachCurrentThread();
-	printf("%s AttachCurrentThread\n", __FUNCTION__);
 
 	HQEventStructure event;
 	UINT32 event_get;
@@ -55,7 +53,6 @@ void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
 	usleep(33000);
 	WorkThreadContextFast context(thread_func, param);
 	pool->PutContext(context, NULL);
-	printf("%s Exit\n", __FUNCTION__);
 	return NULL;
 }
 

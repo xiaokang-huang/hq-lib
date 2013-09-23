@@ -6,8 +6,8 @@
 #include <GL/glx.h>
 #include <GL/glu.h>
 
-#define FUNC_ENTER() printf("%s Enter\n", __FUNCTION__)
-#define FUNC_EXIT()	 printf("%s Exit\n", __FUNCTION__)
+#define FUNC_ENTER() //DEBUG_PRINT("%s Enter\n", __FUNCTION__)
+#define FUNC_EXIT()	 //DEBUG_PRINT("%s Exit\n", __FUNCTION__)
 
 HQRenderSystem::HQRenderSystem() : window(0) {
 }

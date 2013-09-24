@@ -40,6 +40,7 @@ PRIVATE:
 	HQRenderSystem		m_render;
 
 	EngineStatus		m_status;
+	HQThreadEvent		m_event;
 };
 
 #endif//_HQENGINE_H_

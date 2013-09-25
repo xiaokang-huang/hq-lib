@@ -25,6 +25,7 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 }
 
 void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
+
 	HQEngine* pengine = (HQEngine*)param;
 	pengine->m_window.AttachCurrentThread();
 
@@ -34,6 +35,8 @@ void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
 		event_get = pengine->m_window.GetEvent(&event, 1);
 		if (event._type == HQEVENTTYPE_SYSTEM_EXIT) {
 			pengine->m_status = STATE_EXIT;
+			pengine->m_window.DetachThread();
+			pengine->m_event.SignalAll();
 			return NULL;
 		}
 	} while (event_get != 0);
@@ -53,6 +56,7 @@ void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
 	usleep(33000);
 	WorkThreadContextFast context(thread_func, param);
 	pool->PutContext(context, NULL);
+
 	return NULL;
 }
 
@@ -112,19 +116,23 @@ HQEngine::HQEngine() :	MemoryManagedBase(INDEX_COMMON_MEMORY),
 }
 
 HQEngine::~HQEngine() {
-	Finalize();
+	if (m_nThreadNum) {
+		Finalize();
+	}
 }
 
 RESULT HQEngine::Initialize() {
 	initialize_window();
 	m_render.Initialize(&m_window);
 	initialize_threadpool();
+	m_event.Create();
 	m_status = STATE_READY;
 
 	return HQRESULT_SUCCESS;
 }
 
 RESULT HQEngine::Finalize() {
+	m_event.Destroy();
 	finalize_threadpool();
 	finalize_window();
 
@@ -133,7 +141,8 @@ RESULT HQEngine::Finalize() {
 
 RESULT HQEngine::Start() {
 	WorkThreadContextFast context(HQEngine::thread_func, this);
-	m_pThreadPool->PutContext(context, NULL);
 	m_status = STATE_RUNNING;
+	m_pThreadPool->PutContext(context, NULL);
+	m_event.Wait();
 	return HQRESULT_SUCCESS;
 }

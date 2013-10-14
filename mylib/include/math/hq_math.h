@@ -9,7 +9,11 @@
 
 #include <math/hq_vertex.h>
 #include <math/hq_matrix.h>
+#include <math/hq_geometry.h>
 
+#define REAL_EPSLON			((REAL)0.000001)
+#define REAL_IS_ZERO(x)		(((x) <= REAL_EPSLON ) && ((x) >= -REAL_EPSLON))
+#define REAL_EQUAL(x, y)	(((x) - (y) <= REAL_EPSLON ) && ((x) - (y) >= -REAL_EPSLON))
 ////////////////////////////////////////////////////////////////////////////////
 // set function
 
@@ -35,6 +39,9 @@ void hq_normalize(hq_vertex4* parg_out);
 void hq_minus(hq_vertex2* parg_out, const hq_vertex2& arg_1);
 void hq_minus(hq_vertex3* parg_out, const hq_vertex3& arg_1);
 void hq_minus(hq_vertex4* parg_out, const hq_vertex4& arg_1);
+void hq_length_square(REAL* parg_out, const hq_vertex2& arg_1);
+void hq_length_square(REAL* parg_out, const hq_vertex3& arg_1);
+void hq_length_square(REAL* parg_out, const hq_vertex4& arg_1);
 void hq_length(REAL* parg_out, const hq_vertex2& arg_1);
 void hq_length(REAL* parg_out, const hq_vertex3& arg_1);
 void hq_length(REAL* parg_out, const hq_vertex4& arg_1);
@@ -64,5 +71,6 @@ void hq_entity(hq_matrix4x4* parg_out);
 void hq_add(hq_matrix4x4* parg_out, const hq_matrix4x4& arg_1, const hq_matrix4x4& arg_2);
 void hq_sub(hq_matrix4x4* parg_out, const hq_matrix4x4& arg_1, const hq_matrix4x4& arg_2);
 void hq_mul(hq_matrix4x4* parg_out, const hq_matrix4x4& arg_1, const hq_matrix4x4& arg_2);
+void hq_mul(hq_vertex4* parg_out, const hq_matrix4x4& arg_1, const hq_vertex4& arg_2);
 
 #endif//_HQMATH_H_

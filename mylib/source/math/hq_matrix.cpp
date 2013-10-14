@@ -18,30 +18,34 @@ void hq_entity(hq_matrix4x4* parg_out) {
 // three operands
 void hq_add(hq_matrix4x4* parg_out, const hq_matrix4x4& arg_1, const hq_matrix4x4& arg_2) {
 	for (int i = 0; i < 4; ++i) {
-		parg_out->row0[i] = arg_1.row0[i] + arg_2.row0[i];
-		parg_out->row1[i] = arg_1.row1[i] + arg_2.row1[i];
-		parg_out->row2[i] = arg_1.row2[i] + arg_2.row2[i];
-		parg_out->row3[i] = arg_1.row3[i] + arg_2.row3[i];
+		parg_out->col0[i] = arg_1.col0[i] + arg_2.col0[i];
+		parg_out->col1[i] = arg_1.col1[i] + arg_2.col1[i];
+		parg_out->col2[i] = arg_1.col2[i] + arg_2.col2[i];
+		parg_out->col3[i] = arg_1.col3[i] + arg_2.col3[i];
 	}
 }
 
 void hq_sub(hq_matrix4x4* parg_out, const hq_matrix4x4& arg_1, const hq_matrix4x4& arg_2) {
 	for (int i = 0; i < 4; ++i) {
-		parg_out->row0[i] = arg_1.row0[i] - arg_2.row0[i];
-		parg_out->row1[i] = arg_1.row1[i] - arg_2.row1[i];
-		parg_out->row2[i] = arg_1.row2[i] - arg_2.row2[i];
-		parg_out->row3[i] = arg_1.row3[i] - arg_2.row3[i];
+		parg_out->col0[i] = arg_1.col0[i] - arg_2.col0[i];
+		parg_out->col1[i] = arg_1.col1[i] - arg_2.col1[i];
+		parg_out->col2[i] = arg_1.col2[i] - arg_2.col2[i];
+		parg_out->col3[i] = arg_1.col3[i] - arg_2.col3[i];
 	}
 }
 
 void hq_mul(hq_matrix4x4* parg_out, const hq_matrix4x4& arg_1, const hq_matrix4x4& arg_2) {
-	for (int row = 0; row < 4; ++ row) {
-		for (int col = 0; col < 4; ++ col) {
-			parg_out->data[row][col] = arg_1.data[row][0] * arg_2.data[0][col]
-			                         + arg_1.data[row][1] * arg_2.data[1][col]
-			                         + arg_1.data[row][2] * arg_2.data[2][col]
-			                         + arg_1.data[row][3] * arg_2.data[3][col];
-		}
+	for (int i = 0; i < 4; i++) {
+ 		parg_out->data[i][0] = arg_1.data[i][0]*arg_2.data[0][0] + arg_1.data[i][1]*arg_2.data[1][0] + arg_1.data[i][2]*arg_2.data[2][0] + arg_1.data[i][3]*arg_2.data[3][0];
+		parg_out->data[i][1] = arg_1.data[i][0]*arg_2.data[0][1] + arg_1.data[i][1]*arg_2.data[1][1] + arg_1.data[i][2]*arg_2.data[2][1] + arg_1.data[i][3]*arg_2.data[3][1];
+		parg_out->data[i][2] = arg_1.data[i][0]*arg_2.data[0][2] + arg_1.data[i][1]*arg_2.data[1][2] + arg_1.data[i][2]*arg_2.data[2][2] + arg_1.data[i][3]*arg_2.data[3][2];
+		parg_out->data[i][3] = arg_1.data[i][0]*arg_2.data[0][3] + arg_1.data[i][1]*arg_2.data[1][3] + arg_1.data[i][2]*arg_2.data[2][3] + arg_1.data[i][3]*arg_2.data[3][3];
 	}
 }
 
+void hq_mul(hq_vertex4* parg_out, const hq_matrix4x4& arg_1, const hq_vertex4& arg_2) {
+	parg_out->x = arg_1.m00 * arg_2.x + arg_1.m01 * arg_2.y + arg_1.m02 * arg_2.z + arg_1.m03 * arg_2.w;
+	parg_out->y = arg_1.m10 * arg_2.x + arg_1.m11 * arg_2.y + arg_1.m12 * arg_2.z + arg_1.m13 * arg_2.w;
+	parg_out->z = arg_1.m20 * arg_2.x + arg_1.m21 * arg_2.y + arg_1.m22 * arg_2.z + arg_1.m23 * arg_2.w;
+	parg_out->w = arg_1.m30 * arg_2.x + arg_1.m31 * arg_2.y + arg_1.m32 * arg_2.z + arg_1.m33 * arg_2.w;
+}

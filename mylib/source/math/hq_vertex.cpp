@@ -102,16 +102,31 @@ void hq_minus(hq_vertex4* parg_out, const hq_vertex4& arg_1) {
 	parg_out->z = - arg_1.z;
 }
 
+void hq_length_square(REAL* parg_out, const hq_vertex2& arg_1) {
+	*parg_out = arg_1.x * arg_1.x + arg_1.y * arg_1.y;
+}
+
+void hq_length_square(REAL* parg_out, const hq_vertex3& arg_1) {
+	*parg_out = arg_1.x * arg_1.x + arg_1.y * arg_1.y + arg_1.z * arg_1.z;
+}
+
+void hq_length_square(REAL* parg_out, const hq_vertex4& arg_1) {
+	*parg_out = arg_1.x * arg_1.x + arg_1.y * arg_1.y + arg_1.z * arg_1.z;
+}
+
 void hq_length(REAL* parg_out, const hq_vertex2& arg_1) {
-	*parg_out = sqrt(arg_1.x * arg_1.x + arg_1.y * arg_1.y);
+	hq_length_square(parg_out, arg_1);
+	*parg_out = hq_sqrt(*parg_out);
 }
 
 void hq_length(REAL* parg_out, const hq_vertex3& arg_1) {
-	*parg_out = sqrt(arg_1.x * arg_1.x + arg_1.y * arg_1.y + arg_1.z * arg_1.z);
+	hq_length_square(parg_out, arg_1);
+	*parg_out = hq_sqrt(*parg_out);
 }
 
 void hq_length(REAL* parg_out, const hq_vertex4& arg_1) {
-	*parg_out = sqrt(arg_1.x * arg_1.x + arg_1.y * arg_1.y + arg_1.z * arg_1.z);
+	hq_length_square(parg_out, arg_1);
+	*parg_out = hq_sqrt(*parg_out);
 }
 
 void hq_normalize(hq_vertex2* parg_out, const hq_vertex2& arg_1) {

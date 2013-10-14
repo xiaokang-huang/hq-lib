@@ -23,6 +23,8 @@ SOURCE = '\
 	./source/container/hq_quadnode.cpp\
 	./source/math/hq_matrix.cpp\
 	./source/math/hq_vertex.cpp\
+	./source/math/hq_geometry.cpp\
+	./source/util/hq_fsm.cpp\
 '
 
 SharedLibrary('mylib', Split(SOURCE),\

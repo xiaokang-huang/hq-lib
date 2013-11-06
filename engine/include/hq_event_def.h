@@ -10,6 +10,8 @@ struct HQEventStructure {
 	HQEventType _type;
 	HQEventData _data;
 
+	HQEventStructure() : _type(0), _data(0) {}
+
 	void Set(HQEventType t, HQEventData d) {
 		_type = t;
 		_data = d;

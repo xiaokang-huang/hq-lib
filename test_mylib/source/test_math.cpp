@@ -20,4 +20,9 @@ void test_math::TC_01_01() {
 
 	hq_dot(&ret, a, b);
 	CPPUNIT_ASSERT(REAL_EQUAL(ret, 31));
+	hq_cross(&c, a, b);
+	hq_dot(&ret, a, c);
+	CPPUNIT_ASSERT(REAL_IS_ZERO(ret));
+	hq_dot(&ret, b, c);
+	CPPUNIT_ASSERT(REAL_IS_ZERO(ret));
 }

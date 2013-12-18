@@ -5,7 +5,7 @@
 #include <hq_os.h>
 #include <hq_memory_mgr.h>
 #include <hq_event_def.h>
-//#include <rendersystem/hq_rendersystem.h>
+#include <hq_thread.h>
 
 class HQWindow : PUBLIC MemoryManagedBase {
 PUBLIC:

@@ -4,7 +4,8 @@
 #include <hq_util.h>
 #include <hq_event_def.h>
 
-#include <unistd.h>
+#define FUNC_ENTER()	printf("Enter <%s>\n", __FUNCTION__);
+#define FUNC_END()		printf("End   <%s>\n", __FUNCTION__);
 
 enum {
 	INDEX_COMMON_MEMORY = 0,
@@ -24,7 +25,7 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 }
 
 void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
-
+/*
 	HQEngine* pengine = (HQEngine*)param;
 	pengine->m_window.AttachCurrentThread();
 
@@ -51,10 +52,75 @@ void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
 	pengine->m_render.SwapScreenBuffer();
 
 	pengine->m_window.DetachThread();
-	usleep(33000);
+	hq_usleep(33000);
 	WorkThreadContextFast context(thread_func, param);
 	pool->PutContext(context, NULL);
+*/
+	return NULL;
+}
 
+void* HQEngine::swap_back_nodes(HQThreadPoolFast* pool, void* param) {
+	FUNC_ENTER();
+	{
+		HQEngine* pengine = (HQEngine*)param;
+		hq_msleep(33);
+		if (pengine->m_status == STATUS_EXIT) {
+			pengine->m_event.SignalAll();
+		} else {
+			WorkThreadContextFast context1(HQEngine::handle_event, param);
+			WorkThreadContextFast context2(HQEngine::render_front_nodes, param);
+			pool->PutContext(context1, NULL);
+			pool->PutContext(context2, NULL);
+		}	
+	}
+	FUNC_END();
+	return NULL;
+}
+
+void* HQEngine::update_back_nodes(HQThreadPoolFast* pool, void* param) {
+	FUNC_ENTER();
+	WorkThreadContextFast context(HQEngine::swap_back_nodes, param);
+	pool->PutContext(context, NULL);
+	FUNC_END();
+	return NULL;
+}
+
+void* HQEngine::render_front_nodes(HQThreadPoolFast* pool, void* param) {
+	FUNC_ENTER();
+	WorkThreadContextFast context(HQEngine::swap_framebuffer, param);
+	pool->PutContext(context, NULL);
+	FUNC_END();
+	return NULL;
+}
+
+void* HQEngine::swap_framebuffer(HQThreadPoolFast* pool, void* param) {
+	FUNC_ENTER();
+	HQEngine* pengine = (HQEngine*)param;
+	pengine->m_window.AttachCurrentThread();
+	pengine->m_render.ClearBackBuffer(1, 0, 0, 0);
+	pengine->m_render.SwapScreenBuffer();
+	pengine->m_window.DetachThread();
+	FUNC_END();
+	return NULL;
+}
+
+void* HQEngine::handle_event(HQThreadPoolFast* pool, void* param) {
+	FUNC_ENTER();
+	{
+		HQEngine* pengine = (HQEngine*)param;
+		HQEventStructure event;
+		UINT32 event_get;
+		do {
+			event_get = pengine->m_window.GetEvent(&event, 1);		
+			if (event._type == HQEVENTTYPE_SYSTEM_EXIT) {
+				pengine->m_status = STATUS_EXIT;
+			}
+		} while (event_get != 0);
+
+		WorkThreadContextFast context(HQEngine::update_back_nodes, param);
+		pool->PutContext(context, NULL);
+	}
+	FUNC_END();
 	return NULL;
 }
 
@@ -124,6 +190,8 @@ RESULT HQEngine::Initialize() {
 	initialize_threadpool();
 	m_event.Create();
 
+	m_status = STATUS_READY;
+
 	return HQRESULT_SUCCESS;
 }
 
@@ -136,7 +204,7 @@ RESULT HQEngine::Finalize() {
 }
 
 RESULT HQEngine::Start() {
-	WorkThreadContextFast context(HQEngine::thread_func, this);
+	WorkThreadContextFast context(HQEngine::handle_event, this);
 	m_pThreadPool->PutContext(context, NULL);
 	m_event.Wait();
 	return HQRESULT_SUCCESS;

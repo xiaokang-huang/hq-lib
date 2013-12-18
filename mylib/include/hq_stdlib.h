@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 //char
 #define hq_toupper_unsafe(c)	((c)&~0x20)
@@ -64,5 +65,10 @@
 #define hq_strcmp(s1, s2)		strcmp(s1, s2)
 #define hq_stricmp(s1, s2)		stricmp(s1, s2)
 #define hq_strlen(s)			strlen(s)
+
+//sleep
+#define hq_usleep(t)	usleep(t)
+#define hq_msleep(t)	usleep(t * 1000)
+#define hq_sleep(t)		sleep(t)
 
 #endif//HQSTDLIB_H_

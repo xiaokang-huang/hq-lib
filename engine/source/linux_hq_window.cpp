@@ -29,7 +29,7 @@ void InternalWindow::CreateWindow(HQWindow::Info* windowinfo) {
 	    GLX_DOUBLEBUFFER,
 	    None
 	};
-	//XInitThreads();
+	XInitThreads();
 
 	m_pDisplay = XOpenDisplay( NULL );
 	Window root = DefaultRootWindow(m_pDisplay);

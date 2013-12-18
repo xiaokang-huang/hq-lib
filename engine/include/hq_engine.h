@@ -12,10 +12,10 @@ class HQEngine : PUBLIC MemoryManagedBase {
 		virtual void DoCallBack(HQEventType type, HQEventData data);
 	};
 	typedef enum {
-		STATE_ERROR = -1,
-		STATE_READY,
-		STATE_RUNNING,
-		STATE_EXIT,
+		STATUS_ERROR = -1,
+		STATUS_RUNNING,
+		STATUS_READY,
+		STATUS_EXIT,
 	} EngineStatus;
 
 PUBLIC:
@@ -32,6 +32,12 @@ PRIVATE:
 	RESULT finalize_window();
 
 	static void* thread_func(HQThreadPoolFast* pool, void* param);
+
+	static void* swap_back_nodes(HQThreadPoolFast* pool, void* param);
+	static void* update_back_nodes(HQThreadPoolFast* pool, void* param);
+	static void* render_front_nodes(HQThreadPoolFast* pool, void* param);
+	static void* swap_framebuffer(HQThreadPoolFast* pool, void* param);
+	static void* handle_event(HQThreadPoolFast* pool, void* param);
 PRIVATE:
 	HQThreadPoolFast*	m_pThreadPool;
 	UINT32				m_nThreadNum;

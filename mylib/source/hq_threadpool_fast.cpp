@@ -31,7 +31,7 @@ struct WorkThreadContestGroupFast : PUBLIC WorkThreadContextFast {
 void* HQThreadPoolFast::threadpool_func(void* param) {
 	ThreadNodeFast* pthreadnode = (ThreadNodeFast*)param;
 	BOOLEAN running = TRUE;
-	UINT32 idx;
+	UINT32 idx = 0;
 
 	while (running) {
 		pthreadnode->_pool->m_WaitSemaphore.Wait();

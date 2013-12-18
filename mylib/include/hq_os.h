@@ -71,7 +71,11 @@ UINT32	GetProcessNum ();
 // ======================================================
 //	stdlib
 // ======================================================
-#include <hq_stdlib.h>
+#if ( defined(_WIN32) || defined(_WINDOWS))
+	#include <hq_stdlib.h>
+#else // (defined(__LINUX))
+	#include <hq_stdlib.h>
+#endif
 
 const int MultiplyDeBruijnBitPosition32[32] = {
   0,  1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,

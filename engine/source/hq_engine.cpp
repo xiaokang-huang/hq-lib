@@ -4,8 +4,8 @@
 #include <hq_util.h>
 #include <hq_event_def.h>
 
-#define FUNC_ENTER()	printf("Enter <%s>\n", __FUNCTION__);
-#define FUNC_END()		printf("End   <%s>\n", __FUNCTION__);
+#define FUNC_ENTER()	//DEBUG_PRINT("Enter <%s>\n", __FUNCTION__);
+#define FUNC_END()		//DEBUG_PRINT("End   <%s>\n", __FUNCTION__);
 
 enum {
 	INDEX_COMMON_MEMORY = 0,
@@ -22,41 +22,6 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 	//HQEngine* pengine = (HQEngine*)usr_ptr;
 	if (type == HQEVENTTYPE_SYSTEM_EXIT) {
 	}
-}
-
-void* HQEngine::thread_func(HQThreadPoolFast* pool, void* param) {
-/*
-	HQEngine* pengine = (HQEngine*)param;
-	pengine->m_window.AttachCurrentThread();
-
-	HQEventStructure event;
-	UINT32 event_get;
-	do {
-		event_get = pengine->m_window.GetEvent(&event, 1);
-		if (event._type == HQEVENTTYPE_SYSTEM_EXIT) {
-			pengine->m_window.DetachThread();
-			pengine->m_event.SignalAll();
-			return NULL;
-		}
-	} while (event_get != 0);
-
-	static int i = 0;
-	i = (i + 1) & 3;
-	REAL color[4][4] = {
-		{1, 0, 0, 1},
-		{0, 1, 0, 1},
-		{0, 0, 1, 1},
-		{1, 1, 1, 1}
-	};
-	pengine->m_render.ClearBackBuffer(color[i][0], color[i][1], color[i][2], color[i][3]);
-	pengine->m_render.SwapScreenBuffer();
-
-	pengine->m_window.DetachThread();
-	hq_usleep(33000);
-	WorkThreadContextFast context(thread_func, param);
-	pool->PutContext(context, NULL);
-*/
-	return NULL;
 }
 
 void* HQEngine::swap_back_nodes(HQThreadPoolFast* pool, void* param) {

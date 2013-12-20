@@ -31,8 +31,6 @@ PRIVATE:
 	RESULT initialize_window();
 	RESULT finalize_window();
 
-	static void* thread_func(HQThreadPoolFast* pool, void* param);
-
 	static void* swap_back_nodes(HQThreadPoolFast* pool, void* param);
 	static void* update_back_nodes(HQThreadPoolFast* pool, void* param);
 	static void* render_front_nodes(HQThreadPoolFast* pool, void* param);

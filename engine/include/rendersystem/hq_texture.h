@@ -17,6 +17,7 @@ PUBLIC:
 PUBLIC:
 	RESULT Create(UINT32 width);
 	RESULT Create(UINT32 width, UINT32 height);
+	RESULT Destory();
 PRIVATE:
 	UINT32	mIdTex;
 	Type 	mType;

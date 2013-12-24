@@ -25,6 +25,7 @@ SOURCE = '\
 	./source/math/hq_vertex.cpp\
 	./source/math/hq_geometry.cpp\
 	./source/util/hq_fsm.cpp\
+	./source/image/hq_image.cpp\
 '
 
 SharedLibrary('mylib', Split(SOURCE),\

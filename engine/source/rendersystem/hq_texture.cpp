@@ -1,1 +1,0 @@
-#include <rendersystem/hq_texture.h>

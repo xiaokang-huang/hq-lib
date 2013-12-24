@@ -13,6 +13,7 @@ typedef signed long			INTSYS;
 typedef unsigned long		UINTSYS;
 
 typedef UINTSYS HQHANDLE;
+typedef INTSYS 	HQOFFSET;
 
 typedef float	REAL;
 typedef double	DOUBLE;
@@ -22,15 +23,6 @@ typedef INTSYS	_PTRDIFF;
 typedef INT32	BOOLEAN;
 
 #include <hq_os.h>
-
-//typedef long unsigned int	_SIZE;
-#if ( defined(_WIN32) || defined(_WINDOWS))
-	typedef size_t _SIZE;
-#else//linux
-	typedef size_t _SIZE;
-#endif
-
-
 
 union MULTIPOINTER {
 	INT8*		ptr_int8;

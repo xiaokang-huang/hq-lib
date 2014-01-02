@@ -95,7 +95,8 @@ UINT32 InternalWindow::GetEvent(HQEventStructure* event_array, UINT32 array_size
 }
 
 void InternalWindow::AttachCurrentThread() {
-	ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
+	glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext);
+	//ASSERT(glXMakeCurrent(m_pDisplay, m_Window, m_Glcontext));
 	//glEnable(GL_DEPTH_TEST);
 	//glViewport(0, 0, m_windowinfo->width, m_windowinfo->height);
 }

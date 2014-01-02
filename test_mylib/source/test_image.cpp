@@ -23,3 +23,11 @@ void test_image::TC_01_01() {
 	CPPUNIT_ASSERT_EQUAL(height, (UINT32)512);
 	CPPUNIT_ASSERT_EQUAL(type, HQImage::COMPRESS_TYPE_DXT5);
 }
+
+void test_image::TC_01_02() {
+	const char* test_file = "test_data/image/test_non.dds";
+	HQImage::Info info = { 0 };
+	HQImage img(&info);
+	RESULT ret = img.LoadFromFile(test_file);
+	CPPUNIT_ASSERT_EQUAL(ret, HQRESULT_IMAGE_OPENFILE_FAILED);
+}

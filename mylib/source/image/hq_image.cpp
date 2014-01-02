@@ -176,5 +176,9 @@ error:
 	if (fp) {
 		close(fp);
 	}
+
+	if (mBuf == NULL) {
+		ret = HQRESULT_IMAGE_OPENFILE_FAILED;
+	}
 	return ret;
 }

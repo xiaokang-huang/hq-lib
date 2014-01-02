@@ -16,6 +16,7 @@ SOURCE = '\
 	source/test_threadpool.cpp\
 	source/test_threadpool_fast.cpp\
 	source/test_math.cpp\
+	source/test_image.cpp\
 '
 
 Program('testmylib', Split(SOURCE),\

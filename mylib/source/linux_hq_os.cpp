@@ -9,7 +9,7 @@ UINT32 GetProcessNum () {
 
 INT32 hq_open(const char* path, UINT32 flag) {
 	int internal_flag = 0;
-	if (flag & (HQOPEN_FLAG_R | HQOPEN_FLAG_W) == (HQOPEN_FLAG_R | HQOPEN_FLAG_W)) {
+	if ((flag & (HQOPEN_FLAG_R | HQOPEN_FLAG_W)) == (HQOPEN_FLAG_R | HQOPEN_FLAG_W)) {
 		internal_flag = O_RDWR;
 	} else if (flag & HQOPEN_FLAG_R) {
 		internal_flag = O_RDONLY;

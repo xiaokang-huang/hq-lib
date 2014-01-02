@@ -1,11 +1,19 @@
 #include <image/hq_image.h>
 #include <hq_errorcode.h>
+#include <hq_util.h>
 
-const UINT32 FORCC_DDS = FOURCC('D', 'D', 'S', ' ');
+#define DEBUG DEBUG_PRINT
 
 /* ====================================================================== */
 // DDS loader
 /* ====================================================================== */
+const UINT32 FORCC_DDS	= FOURCC('D', 'D', 'S', ' ');
+const UINT32 FORCC_DXT1	= FOURCC('D', 'X', 'T', '1');
+const UINT32 FORCC_DXT2	= FOURCC('D', 'X', 'T', '2');
+const UINT32 FORCC_DXT3	= FOURCC('D', 'X', 'T', '3');
+const UINT32 FORCC_DXT4	= FOURCC('D', 'X', 'T', '4');
+const UINT32 FORCC_DXT5	= FOURCC('D', 'X', 'T', '5');
+
 enum DDSD_FLAGS {
 	DDSD_CAPS = 0x00000001l,
 	DDSD_HEIGHT = 0x00000002l,
@@ -68,7 +76,7 @@ struct _dds_file {
 	char				data[0];
 };
 
-static void* _load_dds(INT32 fp, UINT32 nTrackId, UINT32* pWidth, UINT32* pHeight) {
+static void* _load_dds(INT32 fp, UINT32 nTrackId, UINT32* pWidth, UINT32* pHeight, HQImage::CompressType* ptype) {
 	void* pBuf = NULL;
 	_SIZE read_size = 0;
 	_dds_file dds;
@@ -83,6 +91,23 @@ static void* _load_dds(INT32 fp, UINT32 nTrackId, UINT32* pWidth, UINT32* pHeigh
 
 	*pWidth		= dds.header.dwWidth;
 	*pHeight	= dds.header.dwHeight;
+	switch(dds.header.ddpfPixelFormat.dwFourCC) {
+	case FORCC_DXT1:
+		*ptype = HQImage::COMPRESS_TYPE_DXT1;
+		break;
+	case FORCC_DXT2:
+		*ptype = HQImage::COMPRESS_TYPE_DXT2;
+		break;
+	case FORCC_DXT3:
+		*ptype = HQImage::COMPRESS_TYPE_DXT3;
+		break;
+	case FORCC_DXT4:
+		*ptype = HQImage::COMPRESS_TYPE_DXT4;
+		break;
+	case FORCC_DXT5:
+		*ptype = HQImage::COMPRESS_TYPE_DXT5;
+		break;
+	}
 
 	UINT32 data_size = dds.header.dwPitchOrLinearSize;
 	pBuf = MemAlloc(nTrackId, data_size);
@@ -98,8 +123,12 @@ static void* _load_dds(INT32 fp, UINT32 nTrackId, UINT32* pWidth, UINT32* pHeigh
 }
 
 /* ====================================================================== */
-// DDS loader
+// image
 /* ====================================================================== */
+HQImage::~HQImage() {
+	Destory();
+}
+
 RESULT HQImage::Create(UINT32 width, UINT32 height, CompressType type) {
 	Destory();
 	mWidth = width;
@@ -137,10 +166,9 @@ RESULT HQImage::LoadFromFile(const char* path) {
 		goto error;
 	}
 	hq_seek(fp, 0, HQSEEK_FLAG_SET);
-
 	switch (magic) {
 	case FORCC_DDS:
-		mBuf = _load_dds(fp, m_nTracerIdx, &mWidth, &mHeight);
+		mBuf = _load_dds(fp, m_nTracerIdx, &mWidth, &mHeight, &mType);
 		break;
 	}
 

@@ -1,14 +1,16 @@
 #ifndef _HQOS_H_
 #define _HQOS_H_
 
+#include <hq_config.h>
+
 // ======================================================
 //	predefined include
 // ======================================================
-#if ( defined(_WIN32) || defined(_WINDOWS))
+#if defined(CONFIG_WINDOWS)
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <assert.h>
-#else // (defined(__LINUX))
+#elif defined(CONFIG_LINUX)
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <assert.h>
@@ -18,9 +20,9 @@
 //	system related data type
 // ======================================================
 //typedef long unsigned int	_SIZE;
-#if ( defined(_WIN32) || defined(_WINDOWS))
+#if defined(CONFIG_WINDOWS)
 	typedef size_t _SIZE;
-#else//linux
+#elif defined(CONFIG_LINUX)
 	typedef size_t _SIZE;
 #endif
 
@@ -31,7 +33,7 @@
 // ======================================================
 //	DLL API
 // ======================================================
-#if ( defined(_WIN32) || defined(_WINDOWS))
+#if defined(CONFIG_WINDOWS)
 #define SHAREDAPI __deci
 #endif
 // ======================================================
@@ -49,14 +51,14 @@
 // ======================================================
 //	Thread
 // ======================================================
-#if ( defined(_WIN32) || defined(_WINDOWS))
+#if defined(CONFIG_WINDOWS)
 	#include <windows.h>
 	#define THREADHANDLE 	HANDLE
 	#define THREADMUTEX		HANDLE
 	#define THREADSPINLOCK	HANDLE
 	#define THREADSEMAPHORE	HANDLE
 	#define THREADEVENT		HANDLE
-#else // (defined(__LINUX))
+#elif defined(CONFIG_LINUX)
 	#include <pthread.h>
 	#include <semaphore.h>
 	#define THREADHANDLE 	pthread_t
@@ -72,10 +74,10 @@ UINT32	GetProcessNum ();
 // ======================================================
 //	print and assert
 // ======================================================
-#if ( defined(_WIN32) || defined(_WINDOWS))
+#if defined(CONFIG_WINDOWS)
 	#define PRINT printf
 	#define ASSERT assert
-#else // (defined(__LINUX))
+#elif defined(CONFIG_LINUX)
 	#define PRINT printf
 	#define ASSERT assert
 #endif
@@ -83,16 +85,16 @@ UINT32	GetProcessNum ();
 // ======================================================
 //	stdlib
 // ======================================================
-#if ( defined(_WIN32) || defined(_WINDOWS))
+#if defined(CONFIG_WINDOWS)
 	#include <hq_stdlib.h>
-#else // (defined(__LINUX))
+#elif defined(CONFIG_LINUX)
 	#include <hq_stdlib.h>
 #endif
 
 // ======================================================
 //	CAS operation
 // ======================================================
-#if ( defined(_WIN32) || defined(_WINDOWS))
+#if defined(CONFIG_WINDOWS)
 	#define COMPAREANDSWAP(dest, oldvalue, newvalue) InterlockedCompareExchange(dest, newvalue, oldvalue)
 #else
 	#define COMPAREANDSWAP(dest, oldvalue, newvalue) __sync_val_compare_and_swap(dest, oldvalue, newvalue)
@@ -114,8 +116,8 @@ UINT32	GetProcessNum ();
 // ======================================================
 //	opengl
 // ======================================================
-#if ( defined(_WIN32) || defined(_WINDOWS))
-#else
+#if defined(CONFIG_WINDOWS)
+#elif defined(CONFIG_LINUX)
 	#include <GL/gl.h>
 	#include <GL/glx.h>
 #endif
@@ -123,5 +125,12 @@ UINT32	GetProcessNum ();
 //	other
 // ======================================================
 #include <math.h>
-#define FOURCC(a,b,c,d) ( ((UINT32)d) | ( ((UINT32)c) << 8 ) | ( ((UINT32)b) << 16 ) | ( ((UINT32)a) << 24 ) )
+
+#if defined(CONFIG_LITTLE_ENDING)
+	#define FOURCC(a,b,c,d) ( ((UINT32)a) | ( ((UINT32)b) << 8 ) | ( ((UINT32)c) << 16 ) | ( ((UINT32)d) << 24 ) )
+#endif
+#if defined(CONFIG_BIG_ENDING)
+	#define FOURCC(a,b,c,d) ( ((UINT32)d) | ( ((UINT32)c) << 8 ) | ( ((UINT32)b) << 16 ) | ( ((UINT32)a) << 24 ) )
+#endif
+
 #endif//_HQOS_H_

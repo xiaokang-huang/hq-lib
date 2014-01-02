@@ -27,6 +27,10 @@ PUBLIC:
 	RESULT Create(UINT32 width, UINT32 height, CompressType type);
 	RESULT Destory();
 	RESULT LoadFromFile(const char* path);
+
+	UINT32 GetWidth() {	return mWidth;	}
+	UINT32 GetHeight() {	return mHeight;	}
+	CompressType GetCompressType() {	return mType;	}
 PRIVATE:
 	UINT32			mWidth;
 	UINT32			mHeight;

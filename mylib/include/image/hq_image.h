@@ -3,6 +3,7 @@
 
 #include <hq_type.h>
 #include <hq_memory_mgr.h>
+#include <container/hq_buffer.h>
 
 const RESULT HQRESULT_IMAGE_OPENFILE_FAILED = -1;
 
@@ -21,7 +22,7 @@ PUBLIC:
 		UINT32 nTracerIdx;
 	};
 PUBLIC:
-	HQImage(Info* info) : MemoryManagedBase(info->nTracerIdx), mWidth(0), mHeight(0), mType(COMPRESS_TYPE_UNKNOWN), mBuf(NULL) {}
+	HQImage(Info* info) : MemoryManagedBase(info->nTracerIdx), mWidth(0), mHeight(0), mDataSize(0), mType(COMPRESS_TYPE_UNKNOWN), mBuf(NULL) {}
 	~HQImage();
 PUBLIC:
 	RESULT Create(UINT32 width, UINT32 height, CompressType type);
@@ -34,6 +35,7 @@ PUBLIC:
 PRIVATE:
 	UINT32			mWidth;
 	UINT32			mHeight;
+	UINT32			mDataSize;
 	CompressType 	mType;
 	void*			mBuf;
 };

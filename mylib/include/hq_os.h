@@ -120,6 +120,7 @@ UINT32	GetProcessNum ();
 #elif defined(CONFIG_LINUX)
 	#include <GL/gl.h>
 	#include <GL/glx.h>
+	#include <GL/glext.h>
 #endif
 // ======================================================
 //	other

@@ -149,6 +149,7 @@ RESULT HQImage::Destory() {
 
 	return HQRESULT_SUCCESS;
 }
+
 RESULT HQImage::LoadFromFile(const char* path) {
 	RESULT ret = HQRESULT_SUCCESS;
 	UINT32 magic = 0;

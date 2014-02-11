@@ -20,9 +20,11 @@ PUBLIC:
 		return this;
 	}
 	void Destory() {
-		Managed_Free(m_ptr);
-		m_ptr = NULL;
-		m_size = 0;
+		if (m_ptr) {
+			Managed_Free(m_ptr);
+			m_ptr = NULL;
+			m_size = 0;
+		}	
 	}
 	UINT32	GetSize()	{	return m_size;	}
 	void*	GetBuf()	{	return m_ptr;	}

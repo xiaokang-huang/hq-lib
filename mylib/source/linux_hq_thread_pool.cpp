@@ -99,13 +99,13 @@ struct ContextNode : PUBLIC MemoryAllocatorBase {
 	}
 
 	inline void AddDependent(UINT8 idx_nextnode, ContextNode* pWorkingContext) {
-		++ pWorkingContext[idx_nextnode]._ndependency;
+		++ pWorkingContext[(UINT32)idx_nextnode]._ndependency;
 		_adependency[_GET_ARRAY_NUM ++] = idx_nextnode;
 	}
 	
 	void ReleaseAllDependents(ContextNode* pWorkingContext) {
 		for (UINT8 i = 0; i < _GET_ARRAY_NUM; ++i) {
-			-- pWorkingContext[ _adependency[i] ]._ndependency;
+			-- pWorkingContext[(UINT32) _adependency[i] ]._ndependency;
 		}
 		_GET_ARRAY_NUM = 0;
 	}

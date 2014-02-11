@@ -76,8 +76,7 @@ struct _dds_file {
 	char				data[0];
 };
 
-static void* _load_dds(INT32 fp, UINT32 nTrackId, UINT32* pWidth, UINT32* pHeight, HQImage::CompressType* ptype) {
-	void* pBuf = NULL;
+static HQBuffer* _load_dds(HQBuffer* pBuf, INT32 fp, UINT32 nTrackId, UINT32* pWidth, UINT32* pHeight, HQImage::CompressType* ptype) {
 	_SIZE read_size = 0;
 	_dds_file dds;
 
@@ -110,11 +109,10 @@ static void* _load_dds(INT32 fp, UINT32 nTrackId, UINT32* pWidth, UINT32* pHeigh
 	}
 
 	UINT32 data_size = dds.header.dwPitchOrLinearSize;
-	pBuf = MemAlloc(nTrackId, data_size);
-	read_size = hq_read(fp, pBuf, (_SIZE)(data_size));
+	pBuf->Create(data_size);
+	read_size = hq_read(fp, pBuf->GetBuf(), (_SIZE)(data_size));
 	if (read_size < data_size) {
-		MemFree(pBuf);
-		pBuf = NULL;
+		pBuf->Destory();
 		*pWidth = 0;
 		*pHeight = 0;
 	}
@@ -142,10 +140,7 @@ RESULT HQImage::Destory() {
 	mWidth = 0;
 	mHeight = 0;
 	mType = COMPRESS_TYPE_UNKNOWN;
-	if (mBuf) {
-		Managed_Free(mBuf);
-		mBuf = NULL;
-	}
+	mBuf.Destory();
 
 	return HQRESULT_SUCCESS;
 }
@@ -169,7 +164,7 @@ RESULT HQImage::LoadFromFile(const char* path) {
 	hq_seek(fp, 0, HQSEEK_FLAG_SET);
 	switch (magic) {
 	case FORCC_DDS:
-		mBuf = _load_dds(fp, m_nTracerIdx, &mWidth, &mHeight, &mType);
+		_load_dds(&mBuf, fp, m_nTracerIdx, &mWidth, &mHeight, &mType);
 		break;
 	}
 
@@ -178,7 +173,7 @@ error:
 		close(fp);
 	}
 
-	if (mBuf == NULL) {
+	if (mBuf.GetBuf() == NULL) {
 		ret = HQRESULT_IMAGE_OPENFILE_FAILED;
 	}
 	return ret;

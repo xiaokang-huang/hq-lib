@@ -22,7 +22,7 @@ PUBLIC:
 		UINT32 nTracerIdx;
 	};
 PUBLIC:
-	HQImage(Info* info) : MemoryManagedBase(info->nTracerIdx), mWidth(0), mHeight(0), mDataSize(0), mType(COMPRESS_TYPE_UNKNOWN), mBuf(NULL) {}
+	HQImage(Info* info) : MemoryManagedBase(info->nTracerIdx), mWidth(0), mHeight(0), mDataSize(0), mType(COMPRESS_TYPE_UNKNOWN), mBuf(info->nTracerIdx) {}
 	~HQImage();
 PUBLIC:
 	RESULT Create(UINT32 width, UINT32 height, CompressType type);
@@ -32,12 +32,13 @@ PUBLIC:
 	UINT32 GetWidth() {	return mWidth;	}
 	UINT32 GetHeight() {	return mHeight;	}
 	CompressType GetCompressType() {	return mType;	}
+	HQBuffer*	GetBuffer()	{	return &mBuf;	}
 PRIVATE:
 	UINT32			mWidth;
 	UINT32			mHeight;
 	UINT32			mDataSize;
 	CompressType 	mType;
-	void*			mBuf;
+	HQBuffer		mBuf;
 };
 
 #endif//_HQIMAGE_H_

@@ -13,6 +13,7 @@ SOURCE = '\
 	./source/mesh/hq_meshbase.cpp\
 	./source/mesh/hq_staticmesh.cpp\
 	./source/rendersystem/linux_hq_rendersystem.cpp\
+	./source/rendersystem/linux_hq_texture.cpp\
 	./source/resource/hq_meshmanager.cpp\
 	./source/scene/hq_scenenode.cpp\
 '

@@ -3,6 +3,7 @@
 
 #include <hq_type.h>
 #include <common/hq_reference_base.h>
+#include <image/hq_image.h>
 
 class HQTexture : PUBLIC HQReferenceBase {
 PUBLIC:
@@ -15,9 +16,8 @@ PUBLIC:
 	HQTexture() : mIdTex(0), mType(TYPE_TEXTURE_UNKNOWN), mWidth(0), mHeight(0) {}
 	~HQTexture() {}
 PUBLIC:
-	RESULT Create(UINT32 width);
-	RESULT Create(UINT32 width, UINT32 height);
 	RESULT Destory();
+	RESULT CreateFromImage(HQImage* img);
 PRIVATE:
 	UINT32	mIdTex;
 	Type 	mType;

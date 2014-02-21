@@ -25,6 +25,8 @@ class HQThreadPoolFast : PUBLIC MemoryManagedBase {
 PUBLIC:
 	struct Info {
 		UINT32	nTracerIdx;
+		HQTHREADFUNCFAST	init_func;
+		HQTHREADFUNCFAST	final_func;
 	};
 PUBLIC:
 	HQThreadPoolFast(const Info* info);
@@ -36,6 +38,7 @@ PUBLIC:
 	HQHANDLE PutContext(const WorkThreadContextFast& context, WorkThreadContestGroupFast* pgroup = NULL);
 	WorkThreadContestGroupFast* CreateGroup(const WorkThreadContextFast& group_end_work);
 	void SetGroupReady(WorkThreadContestGroupFast* pgroup);
+
 PRIVATE:
 	void initialize_locks();
 	void finalize_locks();
@@ -65,6 +68,9 @@ PRIVATE:
 
 	HQThreadSemaphore	m_FreeSemaphore;
 	HQThreadSemaphore	m_WaitSemaphore;
+
+	HQTHREADFUNCFAST	m_InitFunc;
+	HQTHREADFUNCFAST	m_FinalFunc;
 };
 
 #endif// HQTHEADPOOLFAST_H_

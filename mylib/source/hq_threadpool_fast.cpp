@@ -33,6 +33,10 @@ void* HQThreadPoolFast::threadpool_func(void* param) {
 	BOOLEAN running = TRUE;
 	UINT32 idx = 0;
 
+	if (pthreadnode->_pool->m_InitFunc) {
+		pthreadnode->_pool->m_InitFunc(pthreadnode->_pool, (void*)(UINTSYS)(pthreadnode->_index));
+	}
+
 	while (running) {
 		pthreadnode->_pool->m_WaitSemaphore.Wait();
 		pthreadnode->_pool->m_pWaitQueue->PopFront(&idx);
@@ -61,6 +65,11 @@ void* HQThreadPoolFast::threadpool_func(void* param) {
 		pthreadnode->_pool->m_pFreeQueue->PushBack(idx);
 		pthreadnode->_pool->m_FreeSemaphore.Release(1);
 	}
+
+	if (pthreadnode->_pool->m_FinalFunc) {
+		pthreadnode->_pool->m_FinalFunc(pthreadnode->_pool, (void*)(UINTSYS)(pthreadnode->_index));
+	}
+
 	return NULL;
 }
 
@@ -153,7 +162,8 @@ void HQThreadPoolFast::add_termwork() {
 
 HQThreadPoolFast::HQThreadPoolFast(const Info* info) :
 		MemoryManagedBase(info->nTracerIdx), m_pContextNodeArray(NULL),
-		m_pFreeQueue(NULL), m_pWaitQueue(NULL), m_nThreadNum(0), m_pThread(NULL) {
+		m_pFreeQueue(NULL), m_pWaitQueue(NULL), m_nThreadNum(0), m_pThread(NULL),
+		m_InitFunc(info->init_func), m_FinalFunc(info->final_func) {
 }
 
 HQThreadPoolFast::~HQThreadPoolFast() {

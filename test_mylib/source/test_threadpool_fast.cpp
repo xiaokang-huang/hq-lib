@@ -8,7 +8,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( test_threadpool_fast );
 #define INIT_THREADPOOL(threadnum, arraysize) \
 	RESULT rc = HQRESULT_SUCCESS;\
 	HQThreadPoolFast::Info info = {\
-			0\
+			0, NULL, NULL\
 	};\
 	HQThreadPoolFast thread_pool(&info);\
 	rc = thread_pool.Initialize(threadnum, arraysize);\

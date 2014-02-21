@@ -8,7 +8,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( test_threadpool_fast );
 #define INIT_THREADPOOL(threadnum, arraysize) \
 	RESULT rc = HQRESULT_SUCCESS;\
 	HQThreadPoolFast::Info info = {\
-			0, NULL, NULL\
+			0,\
 	};\
 	HQThreadPoolFast thread_pool(&info);\
 	rc = thread_pool.Initialize(threadnum, arraysize);\
@@ -23,7 +23,7 @@ void test_threadpool_fast::setUp() {
 void test_threadpool_fast::tearDown() {
 }
 
-static void* atomic_add(HQThreadPoolFast* ppool, void* param) {
+static void* atomic_add(ThreadNodeFast* ppoolnode, void* param) {
 	HQAtomic* patom = (HQAtomic*)param;
 	patom->Add(1);
 	return NULL;
@@ -49,13 +49,13 @@ struct test_struct {
 	HQThreadEvent	event;
 };
 
-static void* add_and_push(HQThreadPoolFast* ppool, void* param) {
+static void* add_and_push(ThreadNodeFast* ppoolnode, void* param) {
 	test_struct* pstruct = (test_struct*)param;
 	pstruct->data += 1;
 
 	if (pstruct->data < 256) {
 		WorkThreadContextFast context(	add_and_push, param	);
-		ppool->PutContext(context);
+		ppoolnode->_pool->PutContext(context);
 	} else {
 		usleep(1000000);
 		pstruct->event.SignalAll();
@@ -134,7 +134,7 @@ void test_threadpool_fast::TC_01_05() {
 #undef LOOP_NUM
 }
 
-static void* atomic_add_sleep(HQThreadPoolFast* ppool, void* param) {
+static void* atomic_add_sleep(ThreadNodeFast* ppoolnode, void* param) {
 	HQAtomic* patom = (HQAtomic*)param;
 	patom->Add(1);
 	usleep(20000);

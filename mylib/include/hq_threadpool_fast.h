@@ -11,13 +11,20 @@ const UINT32 DefaultContextNum = 256;
 
 struct ContextNodeFast;
 class HQThreadPoolFast;
-struct ThreadNodeFast;
 struct WorkThreadContestGroupFast;
-typedef void*(*HQTHREADFUNCFAST)(HQThreadPoolFast*, void*);
+
+struct ThreadNodeFast : PUBLIC MemoryAllocatorBase {
+	HQThread			_thread;
+	HQThreadPoolFast*	_pool;
+	UINT32				_index;
+};
+
+typedef void*(*HQTHREADFUNCFAST)(ThreadNodeFast*, void*);
 
 struct WorkThreadContextFast : PUBLIC MemoryAllocatorBase {
 	HQTHREADFUNCFAST			context_func;
 	void*						context_param;
+	WorkThreadContextFast() : context_func(NULL), context_param(NULL) {}
 	WorkThreadContextFast(HQTHREADFUNCFAST func, void* param) : context_func(func), context_param(param) {}
 };
 
@@ -25,8 +32,8 @@ class HQThreadPoolFast : PUBLIC MemoryManagedBase {
 PUBLIC:
 	struct Info {
 		UINT32	nTracerIdx;
-		HQTHREADFUNCFAST	init_func;
-		HQTHREADFUNCFAST	final_func;
+		WorkThreadContextFast	init_func;
+		WorkThreadContextFast	final_func;
 	};
 PUBLIC:
 	HQThreadPoolFast(const Info* info);
@@ -69,8 +76,8 @@ PRIVATE:
 	HQThreadSemaphore	m_FreeSemaphore;
 	HQThreadSemaphore	m_WaitSemaphore;
 
-	HQTHREADFUNCFAST	m_InitFunc;
-	HQTHREADFUNCFAST	m_FinalFunc;
+	WorkThreadContextFast	m_InitFunc;
+	WorkThreadContextFast	m_FinalFunc;
 };
 
 #endif// HQTHEADPOOLFAST_H_

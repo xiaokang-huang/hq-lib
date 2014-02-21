@@ -10,12 +10,6 @@ struct ContextNodeFast : PUBLIC MemoryAllocatorBase {
 	ContextNodeFast() : context(NULL, NULL), group(NULL) {}
 };
 
-struct ThreadNodeFast : PUBLIC MemoryAllocatorBase {
-	HQThread			_thread;
-	HQThreadPoolFast*	_pool;
-	UINT32				_index;
-};
-
 struct WorkThreadContestGroupFast : PUBLIC WorkThreadContextFast {
 	HQAtomic group_magicnum;
 
@@ -33,8 +27,8 @@ void* HQThreadPoolFast::threadpool_func(void* param) {
 	BOOLEAN running = TRUE;
 	UINT32 idx = 0;
 
-	if (pthreadnode->_pool->m_InitFunc) {
-		pthreadnode->_pool->m_InitFunc(pthreadnode->_pool, (void*)(UINTSYS)(pthreadnode->_index));
+	if (pthreadnode->_pool->m_InitFunc.context_func) {
+		pthreadnode->_pool->m_InitFunc.context_func(pthreadnode, pthreadnode->_pool->m_InitFunc.context_param);
 	}
 
 	while (running) {
@@ -51,7 +45,7 @@ void* HQThreadPoolFast::threadpool_func(void* param) {
 				pthreadnode->_pool->m_WaitSemaphore.Release(1);
 			}
 		} else {
-			pcontextnode->context.context_func(pthreadnode->_pool, pcontextnode->context.context_param);
+			pcontextnode->context.context_func(pthreadnode, pcontextnode->context.context_param);
 		}
 
 		if (pcontextnode->group) {
@@ -66,8 +60,8 @@ void* HQThreadPoolFast::threadpool_func(void* param) {
 		pthreadnode->_pool->m_FreeSemaphore.Release(1);
 	}
 
-	if (pthreadnode->_pool->m_FinalFunc) {
-		pthreadnode->_pool->m_FinalFunc(pthreadnode->_pool, (void*)(UINTSYS)(pthreadnode->_index));
+	if (pthreadnode->_pool->m_FinalFunc.context_func) {
+		pthreadnode->_pool->m_FinalFunc.context_func(pthreadnode, pthreadnode->_pool->m_FinalFunc.context_param);
 	}
 
 	return NULL;

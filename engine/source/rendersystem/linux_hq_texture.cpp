@@ -16,7 +16,7 @@ RESULT HQTexture::CreateFromImage(HQImage* img) {
 	Destory();
 
 	bool failed = false;
-
+	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &mIdTex);
 	glBindTexture(GL_TEXTURE_2D, mIdTex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -26,8 +26,12 @@ RESULT HQTexture::CreateFromImage(HQImage* img) {
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	HQBuffer* pbuf = img->GetBuffer();
+	mWidth = img->GetWidth();
+	mHeight = img->GetHeight();
+	mType = (mHeight > 1)? TYPE_TEXTURE_2D : TYPE_TEXTURE_1D;
 	switch (img->GetCompressType()) {
 	case HQImage::COMPRESS_TYPE_DXT5:
+		
 		glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, 
 			img->GetWidth(), img->GetHeight(), 0, (GLsizei)(pbuf->GetSize()), pbuf->GetBuf());
 		break;

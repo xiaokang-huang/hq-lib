@@ -18,6 +18,7 @@ PUBLIC:
 PUBLIC:
 	RESULT Destory();
 	RESULT CreateFromImage(HQImage* img);
+	UINT32 GetTexId()	{	return mIdTex;	}
 PRIVATE:
 	UINT32	mIdTex;
 	Type 	mType;

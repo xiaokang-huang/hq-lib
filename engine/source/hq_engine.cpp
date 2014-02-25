@@ -24,7 +24,7 @@ void HQEngine::EngineEventCallBack::DoCallBack(HQEventType type, HQEventData dat
 	}
 }
 
-void* HQEngine::swap_back_nodes(HQThreadPoolFast* pool, void* param) {
+void* HQEngine::swap_back_nodes(HQThreadNodeFast* pool, void* param) {
 	FUNC_ENTER();
 	{
 		HQEngine* pengine = (HQEngine*)param;
@@ -34,31 +34,31 @@ void* HQEngine::swap_back_nodes(HQThreadPoolFast* pool, void* param) {
 		} else {
 			WorkThreadContextFast context1(HQEngine::handle_event, param);
 			WorkThreadContextFast context2(HQEngine::render_front_nodes, param);
-			pool->PutContext(context1, NULL);
-			pool->PutContext(context2, NULL);
+			pool->_pool->PutContext(context1, NULL);
+			pool->_pool->PutContext(context2, NULL);
 		}	
 	}
 	FUNC_END();
 	return NULL;
 }
 
-void* HQEngine::update_back_nodes(HQThreadPoolFast* pool, void* param) {
+void* HQEngine::update_back_nodes(HQThreadNodeFast* pool, void* param) {
 	FUNC_ENTER();
 	WorkThreadContextFast context(HQEngine::swap_back_nodes, param);
-	pool->PutContext(context, NULL);
+	pool->_pool->PutContext(context, NULL);
 	FUNC_END();
 	return NULL;
 }
 
-void* HQEngine::render_front_nodes(HQThreadPoolFast* pool, void* param) {
+void* HQEngine::render_front_nodes(HQThreadNodeFast* pool, void* param) {
 	FUNC_ENTER();
 	WorkThreadContextFast context(HQEngine::swap_framebuffer, param);
-	pool->PutContext(context, NULL);
+	pool->_pool->PutContext(context, NULL);
 	FUNC_END();
 	return NULL;
 }
 
-void* HQEngine::swap_framebuffer(HQThreadPoolFast* pool, void* param) {
+void* HQEngine::swap_framebuffer(HQThreadNodeFast* pool, void* param) {
 	FUNC_ENTER();
 	HQEngine* pengine = (HQEngine*)param;
 	pengine->m_window.AttachCurrentThread();
@@ -69,7 +69,7 @@ void* HQEngine::swap_framebuffer(HQThreadPoolFast* pool, void* param) {
 	return NULL;
 }
 
-void* HQEngine::handle_event(HQThreadPoolFast* pool, void* param) {
+void* HQEngine::handle_event(HQThreadNodeFast* pool, void* param) {
 	FUNC_ENTER();
 	{
 		HQEngine* pengine = (HQEngine*)param;
@@ -83,7 +83,7 @@ void* HQEngine::handle_event(HQThreadPoolFast* pool, void* param) {
 		} while (event_get != 0);
 
 		WorkThreadContextFast context(HQEngine::update_back_nodes, param);
-		pool->PutContext(context, NULL);
+		pool->_pool->PutContext(context, NULL);
 	}
 	FUNC_END();
 	return NULL;

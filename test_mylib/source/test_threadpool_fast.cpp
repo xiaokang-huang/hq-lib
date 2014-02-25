@@ -23,7 +23,7 @@ void test_threadpool_fast::setUp() {
 void test_threadpool_fast::tearDown() {
 }
 
-static void* atomic_add(ThreadNodeFast* ppoolnode, void* param) {
+static void* atomic_add(HQThreadNodeFast* ppoolnode, void* param) {
 	HQAtomic* patom = (HQAtomic*)param;
 	patom->Add(1);
 	return NULL;
@@ -49,7 +49,7 @@ struct test_struct {
 	HQThreadEvent	event;
 };
 
-static void* add_and_push(ThreadNodeFast* ppoolnode, void* param) {
+static void* add_and_push(HQThreadNodeFast* ppoolnode, void* param) {
 	test_struct* pstruct = (test_struct*)param;
 	pstruct->data += 1;
 
@@ -134,7 +134,7 @@ void test_threadpool_fast::TC_01_05() {
 #undef LOOP_NUM
 }
 
-static void* atomic_add_sleep(ThreadNodeFast* ppoolnode, void* param) {
+static void* atomic_add_sleep(HQThreadNodeFast* ppoolnode, void* param) {
 	HQAtomic* patom = (HQAtomic*)param;
 	patom->Add(1);
 	usleep(20000);

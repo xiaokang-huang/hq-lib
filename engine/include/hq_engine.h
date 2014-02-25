@@ -31,11 +31,11 @@ PRIVATE:
 	RESULT initialize_window();
 	RESULT finalize_window();
 
-	static void* swap_back_nodes(HQThreadPoolFast* pool, void* param);
-	static void* update_back_nodes(HQThreadPoolFast* pool, void* param);
-	static void* render_front_nodes(HQThreadPoolFast* pool, void* param);
-	static void* swap_framebuffer(HQThreadPoolFast* pool, void* param);
-	static void* handle_event(HQThreadPoolFast* pool, void* param);
+	static void* swap_back_nodes(HQThreadNodeFast* pool, void* param);
+	static void* update_back_nodes(HQThreadNodeFast* pool, void* param);
+	static void* render_front_nodes(HQThreadNodeFast* pool, void* param);
+	static void* swap_framebuffer(HQThreadNodeFast* pool, void* param);
+	static void* handle_event(HQThreadNodeFast* pool, void* param);
 PRIVATE:
 	HQThreadPoolFast*	m_pThreadPool;
 	UINT32				m_nThreadNum;

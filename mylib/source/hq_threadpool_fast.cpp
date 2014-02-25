@@ -23,7 +23,7 @@ struct WorkThreadContestGroupFast : PUBLIC WorkThreadContextFast {
 };
 
 void* HQThreadPoolFast::threadpool_func(void* param) {
-	ThreadNodeFast* pthreadnode = (ThreadNodeFast*)param;
+	HQThreadNodeFast* pthreadnode = (HQThreadNodeFast*)param;
 	BOOLEAN running = TRUE;
 	UINT32 idx = 0;
 
@@ -82,7 +82,7 @@ void HQThreadPoolFast::initialize_thread(UINT32 threadnum) {
 	finalize_thread();
 	m_nThreadNum = (threadnum == 0)? GetProcessNum() : threadnum;
 	m_nThreadCurr.Set(m_nThreadNum);
-	m_pThread = Managed_NewN(m_nThreadNum, ThreadNodeFast);
+	m_pThread = Managed_NewN(m_nThreadNum, HQThreadNodeFast);
 	for (UINT32 i = 0; i < m_nThreadNum; ++i) {
 		m_pThread[i]._index = i;
 		m_pThread[i]._pool = this;

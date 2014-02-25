@@ -13,13 +13,13 @@ struct ContextNodeFast;
 class HQThreadPoolFast;
 struct WorkThreadContestGroupFast;
 
-struct ThreadNodeFast : PUBLIC MemoryAllocatorBase {
+struct HQThreadNodeFast : PUBLIC MemoryAllocatorBase {
 	HQThread			_thread;
 	HQThreadPoolFast*	_pool;
 	UINT32				_index;
 };
 
-typedef void*(*HQTHREADFUNCFAST)(ThreadNodeFast*, void*);
+typedef void*(*HQTHREADFUNCFAST)(HQThreadNodeFast*, void*);
 
 struct WorkThreadContextFast : PUBLIC MemoryAllocatorBase {
 	HQTHREADFUNCFAST			context_func;
@@ -71,7 +71,7 @@ PRIVATE:
 
 	UINT32				m_nThreadNum;
 	HQAtomic			m_nThreadCurr;
-	ThreadNodeFast*		m_pThread;
+	HQThreadNodeFast*	m_pThread;
 
 	HQThreadSemaphore	m_FreeSemaphore;
 	HQThreadSemaphore	m_WaitSemaphore;

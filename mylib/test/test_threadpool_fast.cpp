@@ -57,7 +57,7 @@ static void* add_and_push(HQThreadNodeFast* ppoolnode, void* param) {
 		WorkThreadContextFast context(	add_and_push, param	);
 		ppoolnode->_pool->PutContext(context);
 	} else {
-		usleep(1000000);
+		usleep(100000);
 		pstruct->event.SignalAll();
 	}
 
@@ -88,7 +88,7 @@ void test_threadpool_fast::TC_01_03() {
 	UINT32 data = 0;
 	WorkThreadContextFast context(	atomic_add, &data	);
 	WorkThreadContestGroupFast* group = thread_pool.CreateGroup(context);
-	for (UINT32 i = 0;  i < 4; ++i) {
+	for (UINT32 i = 0;  i < LOOP_NUM; ++i) {
 		thread_pool.PutContext(context, group);
 		usleep(100000);
 	}
@@ -125,7 +125,7 @@ void test_threadpool_fast::TC_01_05() {
 	WorkThreadContestGroupFast* group = thread_pool.CreateGroup(context);
 	for (UINT32 i = 0;  i < LOOP_NUM; ++i) {
 		thread_pool.PutContext(context, group);
-		usleep(20000);
+		usleep(1200);
 	}
 	thread_pool.SetGroupReady(group);
 
@@ -137,7 +137,7 @@ void test_threadpool_fast::TC_01_05() {
 static void* atomic_add_sleep(HQThreadNodeFast* ppoolnode, void* param) {
 	HQAtomic* patom = (HQAtomic*)param;
 	patom->Add(1);
-	usleep(20000);
+	usleep(1000);
 	return NULL;
 }
 

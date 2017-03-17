@@ -4,6 +4,8 @@
 #include <container/hq_node.h>
 
 struct HQBinaryNode : PUBLIC HQTreeNode {
+PRIVATE:
+	static const UINT32 MAXCHILDNUM = 2;
 PUBLIC:
 	HQBinaryNode();
 
@@ -12,7 +14,7 @@ PUBLIC:
 
 	HQBinaryNode*	BinaryGetChild(UINT32 childnum);
 PRIVATE:
-	HQBinaryNode* m_pQuadChilds[2];
+	HQBinaryNode* m_pBinaryChilds[MAXCHILDNUM];
 };
 
 #endif//_HQBINARYNODE_H_

@@ -16,6 +16,7 @@
 
 # Project temp file
 *.dblite
+.idea
 
 # editor temp file
 *~

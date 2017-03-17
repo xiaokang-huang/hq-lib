@@ -229,8 +229,10 @@ void test_container::TC_02_01() {
 }
 
 void test_container::TC_03_01() {
+
 	HQBinaryNode nodes[3];
 	HQBinaryNode* pnode = &nodes[0];
+
 	for (UINT32 i = 0; i < 3; ++i) {
 		for (UINT32 c = 0; c < 4; ++c) {
 			HQBinaryNode* ptemp = pnode[i].BinaryGetChild(c);
@@ -241,6 +243,7 @@ void test_container::TC_03_01() {
 	for (UINT32 i = 0; i < 2; ++i) {
 		pnode[0].BinaryAddChild(pnode + i + 1, i);
 	}
+
 	for (UINT32 i = 0; i < 2; ++i) {
 		HQBinaryNode* ptemp = pnode[0].BinaryGetChild(i);
 		CPPUNIT_ASSERT_EQUAL(ptemp, pnode + i + 1);
@@ -249,12 +252,14 @@ void test_container::TC_03_01() {
 	for (UINT32 i = 0; i < 2; ++i) {
 		pnode[0].BinaryRemoveChild(i);
 	}
+
 	for (UINT32 i = 0; i < 3; ++i) {
 		for (UINT32 c = 0; c < 2; ++c) {
 			HQBinaryNode* ptemp = pnode[i].BinaryGetChild(c);
 			CPPUNIT_ASSERT(ptemp == NULL);
 		}
 	}
+
 }
 
 #define QUEUESIZE 16

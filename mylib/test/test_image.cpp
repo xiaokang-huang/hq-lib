@@ -11,7 +11,8 @@ void test_image::tearDown() {
 }
 
 void test_image::TC_01_01() {
-	const char* test_file = "test_data/image/test.dds";
+
+	const char* test_file = "../../testData/image/test.dds";
 	HQImage::Info info = { 0 };
 	HQImage img(&info);
 	RESULT ret = img.LoadFromFile(test_file);

@@ -23,4 +23,5 @@ elif [ $1 = "distclean" ]; then
 	find ./ -name "*CMakeFiles" | xargs -I {} rm -rf {}
 	find ./ -name "*.cmake" | xargs rm
 	find ./ -name "*Makefile" | xargs rm
+	rm *.cbp
 fi

@@ -17,6 +17,7 @@
 # Project temp file
 *.dblite
 .idea
+cmake-build-debug
 
 # editor temp file
 *~

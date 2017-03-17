@@ -3,7 +3,8 @@
 
 #include <hq_type.h>
 
-const RESULT HQRESULT_RENDERTARGET_ERROR = -1;
+const RESULT HQRESULT_RENDERTARGET_ERROR   = -1;
+const RESULT HQRESULT_RENDERTARGET_SUCCESS = 0;
 
 class HQRenderTarget {
 PUBLIC:

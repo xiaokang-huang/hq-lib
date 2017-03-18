@@ -6,7 +6,7 @@
 
 struct HQTreeNode : PUBLIC MemoryAllocatorBase {
 PUBLIC:
-	HQTreeNode() : m_pVal(NULL), m_pParent(NULL), m_pPrevSibling(this), m_pNext(NULL), m_pLastDecendent(this) {}
+	HQTreeNode() : m_pContainer(NULL), m_pParent(NULL), m_pPrevSibling(this), m_pNext(NULL), m_pLastDecendent(this) {}
 
 	HQTreeNode* GetParent() const;
 	HQTreeNode* GetFirstChild() const;
@@ -20,9 +20,10 @@ PUBLIC:
 	BOOLEAN		IsLeaf() const;
 
 	BOOLEAN Attach(HQTreeNode* pParent);
+    BOOLEAN Attach(HQTreeNode* pParent, HQTreeNode* pNextSibling);
 	BOOLEAN Detach();
 PUBLIC:
-	void* m_pVal;
+	void* m_pContainer;
 PROTECTED:
 	HQTreeNode* m_pParent;
 	HQTreeNode* m_pPrevSibling;

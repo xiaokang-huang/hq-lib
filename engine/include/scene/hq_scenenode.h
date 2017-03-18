@@ -6,18 +6,18 @@
 #include <container/hq_doublelist.h>
 #include <math/hq_math.h>
 
-class HQSceneNode : PUBLIC MemoryManagedBase {
+class HQSceneNode : PUBLIC MemoryAllocatorBase {
 PUBLIC:
-	HQSceneNode(UINT32 nTracerIdx);
-PUBLIC:
-	void AddData(void* pData);
-	void ClearData();
+	HQSceneNode();
 
+	HQTreeNode* GetTreeNode();
+    HQBoundingBox* GetBoundingBox(BOOLEAN isCurrent);
+    hq_matrix4x4* GetTransformMtx(BOOLEAN isCurrent);
+    void UpdateBackToCurrent();
 PRIVATE:
-	HQTreeNode*		m_pNodeLink;
-	HQBoundingBox	m_vBoundingBox[2];
-	hq_matrix4x4	m_vTransformMatrix[2];
-	HQDoubleNode*	m_pDataList;
+	HQTreeNode		m_NodeLink;
+	HQBoundingBox   m_vBoundingBox[2];
+	hq_matrix4x4    m_vTransformMatrix[2];
 };
 
 #endif//_HQSCENENODE_H_

@@ -50,10 +50,9 @@ BOOLEAN	HQTreeNode::IsLeaf() const {
 BOOLEAN HQTreeNode::Attach(HQTreeNode* pParent) {
 	if (pParent == NULL || m_pParent != NULL)
 		return FALSE;
-	HQTreeNode* pfirstchild;
+	HQTreeNode* pfirstchild = pParent->GetFirstChild();
 	// update this node or this tree
 	m_pParent = pParent;
-	pfirstchild = pParent->GetFirstChild();
 	m_pPrevSibling = (pParent->GetLastChild())? pParent->GetLastChild() : this;
 	m_pLastDecendent->m_pNext = pParent->m_pLastDecendent->m_pNext;
 	// update parent tree
@@ -62,6 +61,24 @@ BOOLEAN HQTreeNode::Attach(HQTreeNode* pParent) {
 	if (pfirstchild) {
 		pfirstchild->m_pPrevSibling = this;
 	}
+	return TRUE;
+}
+
+BOOLEAN HQTreeNode::Attach(HQTreeNode* pParent, HQTreeNode* pNextSibling) {
+	if (pParent == NULL || m_pParent != NULL || pNextSibling->m_pParent != pParent)
+		return FALSE;
+	HQTreeNode* pPrevSibling = pNextSibling->GetPrevSibling();
+	// update this node or this tree
+	m_pParent = pParent;
+	m_pPrevSibling = (pPrevSibling)? pPrevSibling : pParent->GetLastChild();
+	m_pLastDecendent->m_pNext = pNextSibling;
+	// update parent tree
+	if (pPrevSibling) {
+		pPrevSibling->m_pLastDecendent->m_pNext = this;
+	} else {
+		m_pParent->m_pNext = this;
+	}
+	pNextSibling->m_pPrevSibling = this;
 	return TRUE;
 }
 

@@ -79,15 +79,15 @@ static void destroyNodes(HQTreeNode* pnodes, UINT32 num) {
 	delete[] pnodes;
 }
 
-static void assembleTree(HQTreeNode* pnodes) {
-	(pnodes + 1)->Attach(pnodes + 0);
-	(pnodes + 2)->Attach(pnodes + 0);
-	(pnodes + 3)->Attach(pnodes + 0);
-	(pnodes + 4)->Attach(pnodes + 2);
-	(pnodes + 5)->Attach(pnodes + 2);
+static void assembleTree0(HQTreeNode *pnodes) {
+	CPPUNIT_ASSERT(TRUE == (pnodes + 1)->Attach(pnodes + 0));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 2)->Attach(pnodes + 0));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 3)->Attach(pnodes + 0));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 4)->Attach(pnodes + 2));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 5)->Attach(pnodes + 2));
 }
 
-static void checkSubtree(HQTreeNode* pnodes, const char* str) {
+static void checkSubtree0(HQTreeNode *pnodes, const char *str) {
 	test_nodes nodes[] = {
 		{	pnodes + 0, NULL, pnodes + 1, NULL, NULL, NULL, pnodes + 1, pnodes + 3	},
 		{	pnodes + 1, pnodes + 0, pnodes + 2, pnodes + 0, pnodes + 2, NULL, NULL, NULL	},
@@ -95,6 +95,27 @@ static void checkSubtree(HQTreeNode* pnodes, const char* str) {
 		{	pnodes + 3, pnodes + 0, NULL, pnodes + 5, NULL, pnodes + 2, NULL, NULL	},
 		{	pnodes + 4, pnodes + 2, pnodes + 5, pnodes + 2, pnodes + 5, NULL, NULL, NULL	},
 		{	pnodes + 5, pnodes + 2, pnodes + 3, pnodes + 4, NULL, pnodes + 4, NULL, NULL	},
+	};
+
+	check_nodelist(&(nodes[0]), sizeof(nodes) / sizeof(test_nodes), str);
+}
+
+static void assembleTree1(HQTreeNode *pnodes) {
+	CPPUNIT_ASSERT(TRUE == (pnodes + 1)->Attach(pnodes + 0));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 2)->Attach(pnodes + 0, pnodes + 1));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 3)->Attach(pnodes + 0, pnodes + 1));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 4)->Attach(pnodes + 3));
+	CPPUNIT_ASSERT(TRUE == (pnodes + 5)->Attach(pnodes + 3, pnodes + 4));
+}
+
+static void checkSubtree1(HQTreeNode *pnodes, const char *str) {
+	test_nodes nodes[] = {
+			{	pnodes + 0, NULL, pnodes + 2, NULL, NULL, NULL, pnodes + 2, pnodes + 1	},
+			{	pnodes + 1, pnodes + 0, NULL, pnodes + 4, NULL, pnodes + 3, NULL, NULL	},
+			{	pnodes + 2, pnodes + 0, pnodes + 3, pnodes + 0, pnodes + 3, NULL, NULL, NULL	},
+			{	pnodes + 3, pnodes + 0, pnodes + 5, pnodes + 2, pnodes + 1, pnodes + 2, pnodes + 5, pnodes + 4	},
+			{	pnodes + 4, pnodes + 3, pnodes + 1, pnodes + 5, NULL, pnodes + 5, NULL, NULL	},
+			{	pnodes + 5, pnodes + 3, pnodes + 4, pnodes + 3, pnodes + 4, NULL, NULL, NULL	},
 	};
 
 	check_nodelist(&(nodes[0]), sizeof(nodes) / sizeof(test_nodes), str);
@@ -117,8 +138,8 @@ void test_container::TC_01_01() {
 	HQTreeNode* pnodes = createNodes(NODENUM, 0);
 	CPPUNIT_ASSERT(NULL != pnodes);
 
-	assembleTree(pnodes);
-	checkSubtree(pnodes, __FUNCTION__);
+	assembleTree0(pnodes);
+	checkSubtree0(pnodes, __FUNCTION__);
 	deassembleTree(pnodes, __FUNCTION__);
 
 	destroyNodes(pnodes, NODENUM);
@@ -132,10 +153,10 @@ void test_container::TC_01_02() {
 	HQTreeNode* ptree1 = pnodes;
 	HQTreeNode* ptree2 = pnodes + 6;
 
-	assembleTree(ptree1);
-	checkSubtree(ptree1, __FUNCTION__);
-	assembleTree(ptree2);
-	checkSubtree(ptree2, __FUNCTION__);
+	assembleTree0(ptree1);
+	checkSubtree0(ptree1, __FUNCTION__);
+	assembleTree0(ptree2);
+	checkSubtree0(ptree2, __FUNCTION__);
 
 	ptree2->Attach(ptree1 + 1);
 	test_nodes nodes[] = {
@@ -169,10 +190,10 @@ void test_container::TC_01_03() {
 	HQTreeNode* ptree1 = pnodes;
 	HQTreeNode* ptree2 = pnodes + 6;
 
-	assembleTree(ptree1);
-	checkSubtree(ptree1, __FUNCTION__);
-	assembleTree(ptree2);
-	checkSubtree(ptree2, __FUNCTION__);
+	assembleTree0(ptree1);
+	checkSubtree0(ptree1, __FUNCTION__);
+	assembleTree0(ptree2);
+	checkSubtree0(ptree2, __FUNCTION__);
 
 	ptree2->Attach(ptree1 + 3);
 	test_nodes nodes[] = {
@@ -190,6 +211,44 @@ void test_container::TC_01_03() {
 			{	ptree2 + 4, ptree2 + 2, ptree2 + 5, ptree2 + 2, ptree2 + 5, NULL, NULL, NULL	},
 			{	ptree2 + 5, ptree2 + 2, ptree2 + 3, ptree2 + 4, NULL, ptree2 + 4, NULL, NULL	},
 		};
+	check_nodelist(&(nodes[0]), sizeof(nodes) / sizeof(test_nodes), __FUNCTION__);
+
+	deassembleTree(ptree2, __FUNCTION__);
+	deassembleTree(ptree1, __FUNCTION__);
+
+	destroyNodes(pnodes, NODENUM);
+#undef NODENUM
+}
+
+void test_container::TC_01_04() {
+#define NODENUM 12
+	HQTreeNode* pnodes = createNodes(NODENUM, 0);
+	CPPUNIT_ASSERT(NULL != pnodes);
+	HQTreeNode* ptree1 = pnodes;
+	HQTreeNode* ptree2 = pnodes + 6;
+
+	assembleTree1(ptree1);
+	checkSubtree1(ptree1, __FUNCTION__);
+	assembleTree1(ptree2);
+	checkSubtree1(ptree2, __FUNCTION__);
+
+	ptree2->Attach(ptree1 + 0, ptree1 + 3);
+
+	test_nodes nodes[] = {
+			{	ptree1 + 0, NULL, ptree1 + 2, NULL, NULL, NULL, ptree1 + 2, ptree1 + 1	},
+			{	ptree1 + 1, ptree1 + 0, NULL, ptree1 + 4, NULL, ptree1 + 3, NULL, NULL	},
+			{	ptree1 + 2, ptree1 + 0, ptree2 + 0, ptree1 + 0, ptree2 + 0, NULL, NULL, NULL	},
+			{	ptree1 + 3, ptree1 + 0, ptree1 + 5, ptree2 + 1, ptree1 + 1, ptree2 + 0, ptree1 + 5, ptree1 + 4	},
+			{	ptree1 + 4, ptree1 + 3, ptree1 + 1, ptree1 + 5, NULL, ptree1 + 5, NULL, NULL	},
+			{	ptree1 + 5, ptree1 + 3, ptree1 + 4, ptree1 + 3, ptree1 + 4, NULL, NULL, NULL	},
+
+			{	ptree2 + 0, ptree1 + 0, ptree2 + 2, ptree1 + 2, ptree1 + 3, ptree1 + 2, ptree2 + 2, ptree2 + 1	},
+			{	ptree2 + 1, ptree2 + 0, ptree1 + 3, ptree2 + 4, NULL, ptree2 + 3, NULL, NULL	},
+			{	ptree2 + 2, ptree2 + 0, ptree2 + 3, ptree2 + 0, ptree2 + 3, NULL, NULL, NULL	},
+			{	ptree2 + 3, ptree2 + 0, ptree2 + 5, ptree2 + 2, ptree2 + 1, ptree2 + 2, ptree2 + 5, ptree2 + 4	},
+			{	ptree2 + 4, ptree2 + 3, ptree2 + 1, ptree2 + 5, NULL, ptree2 + 5, NULL, NULL	},
+			{	ptree2 + 5, ptree2 + 3, ptree2 + 4, ptree2 + 3, ptree2 + 4, NULL, NULL, NULL	},
+	};
 	check_nodelist(&(nodes[0]), sizeof(nodes) / sizeof(test_nodes), __FUNCTION__);
 
 	deassembleTree(ptree2, __FUNCTION__);

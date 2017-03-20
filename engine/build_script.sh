@@ -8,20 +8,19 @@ function print_sector() {
 	echo "========================================"
 }
 
-if [ $1 = "build" ]; then
+if [ $CMD = "build" ]; then
 	print_sector "building_project"
 	(cmake ./)&&(make -j4)
-elif [ $1 = "clean" ]; then
+elif [ $CMD = "clean" ]; then
 	print_sector "clean_project"
 	make clean
-elif [ $1 = "distclean" ]; then
+elif [ $CMD = "distclean" ]; then
 	print_sector "distclean_project"
 	make clean
 	rm -rf build
-	rm -rf cmake-build-debug
+	#rm -rf cmake-build-debug
 	rm CMakeCache.txt
 	find ./ -name "*CMakeFiles" | xargs -I {} rm -rf {}
 	find ./ -name "*.cmake" | xargs rm
 	find ./ -name "*Makefile" | xargs rm
-	rm *.cbp
 fi

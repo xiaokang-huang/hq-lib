@@ -18,7 +18,7 @@ elif [ $CMD = "distclean" ]; then
 	print_sector "distclean_project"
 	make clean
 	rm -rf build
-	rm -rf cmake-build-debug
+	#rm -rf cmake-build-debug
 	rm CMakeCache.txt
 	find ./ -name "*CMakeFiles" | xargs -I {} rm -rf {}
 	find ./ -name "*.cmake" | xargs rm

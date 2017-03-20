@@ -20,7 +20,7 @@ PUBLIC:
 	BOOLEAN		IsLeaf() const;
 
 	BOOLEAN Attach(HQTreeNode* pParent);
-    BOOLEAN Attach(HQTreeNode* pParent, HQTreeNode* pNextSibling);
+	BOOLEAN Attach(HQTreeNode* pParent, HQTreeNode* pNextSibling);
 	BOOLEAN Detach();
 PUBLIC:
 	void* m_pContainer;
@@ -30,5 +30,55 @@ PROTECTED:
 	HQTreeNode* m_pNext;
 	HQTreeNode* m_pLastDecendent;
 };
+
+struct HQLimitedTreeNodeBase : PUBLIC HQTreeNode {
+PUBLIC:
+	virtual INT32 GetMaxChildCount() = 0;
+	virtual HQTreeNode* GetChild(INT32 nIndex) = 0;
+	virtual BOOLEAN Attach(HQLimitedTreeNodeBase* pParent, INT32 nIndex) = 0;
+	virtual BOOLEAN RemoveChild(INT32 nIndex) = 0;
+PROTECTED:
+	virtual void setChild(INT32 nIndex, HQTreeNode* pChild) = 0;
+};
+
+template <INT32 MAX_CHILD_NUM>
+struct HQLimitedTreeNode : PUBLIC HQLimitedTreeNodeBase {
+PUBLIC:
+	HQLimitedTreeNode() : HQLimitedTreeNodeBase() {
+		hq_memset(m_pChildPtr, 0, sizeof(m_pChildPtr));
+	}
+
+	virtual INT32 GetMaxChildCount() {
+		return MAX_CHILD_NUM;
+	}
+
+	virtual HQTreeNode* GetChild(INT32 nIndex) {
+		return m_pChildPtr[nIndex];
+	}
+
+	virtual BOOLEAN Attach(HQLimitedTreeNodeBase* pParent, INT32 nIndex) {
+		if (nIndex >= pParent->GetMaxChildCount() || pParent->GetChild(nIndex) != NULL)	return FALSE;
+		if (Attach(pParent) == FALSE)	return FALSE;
+		pParent->setChild(nIndex, this);
+		return TRUE;
+	}
+
+	virtual BOOLEAN RemoveChild(INT32 nIndex) {
+		HQTreeNode* child = GetChild(nIndex);
+		if (child == NULL)	return FALSE;
+		child->Detach();
+		setChild(nIndex, NULL);
+	}
+PROTECTED:
+	virtual void setChild(INT32 nIndex, HQTreeNode* pChild) {
+		m_pChildPtr[nIndex] = pChild;
+	}
+PRIVATE:
+	HQLimitedTreeNodeBase* m_pChildPtr[MAX_CHILD_NUM];
+};
+
+typedef HQLimitedTreeNode<2> HQBinaryTreeNode;
+typedef HQLimitedTreeNode<4> HQQuadTreeNode;
+typedef HQLimitedTreeNode<8> HQOCTreeNode;
 
 #endif//_HQNODE_H_

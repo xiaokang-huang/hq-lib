@@ -105,4 +105,3 @@ BOOLEAN HQTreeNode::Detach() {
 
 	return TRUE;
 }
-
